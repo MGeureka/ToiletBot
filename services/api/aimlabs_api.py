@@ -1,5 +1,5 @@
 import json
-import aiohttp, aiofiles, asyncio
+import aiohttp, aiofiles
 from functools import partial
 from typing import Any
 

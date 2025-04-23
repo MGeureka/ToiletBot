@@ -5,7 +5,7 @@ from utils.log import logger
 from utils.checks import is_correct_channel, is_correct_author
 from utils.errors import CheckError
 import traceback
-import sys
+
 
 # https://discord.com/oauth2/authorize?client_id=1352384167513423903&permissions=1689934474247232&integration_type=0&scope=bot+applications.commands
 

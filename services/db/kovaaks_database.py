@@ -1,6 +1,4 @@
 from datetime import datetime, timezone
-import aiofiles
-import json
 
 from utils.errors import UsernameAlreadyExists, UsernameDoesNotExist
 from utils.database_helper import (get_profiles_from_db, execute_commit)
