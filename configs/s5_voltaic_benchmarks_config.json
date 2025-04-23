@@ -1,0 +1,720 @@
+{
+    "categories": [
+        {
+            "id": 1,
+            "subcategories": [
+                {
+                    "id": 1
+                },
+                {
+                    "id": 2
+                },
+                {
+                    "id": 7
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "subcategories": [
+                {
+                    "id": 3
+                },
+                {
+                    "id": 4
+                },
+                {
+                    "id": 8
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "subcategories": [
+                {
+                    "id": 5
+                },
+                {
+                    "id": 6
+                },
+                {
+                    "id": 9
+                }
+            ]
+        }
+    ],
+    "tier_energies": [
+        [
+            100,
+            200,
+            300,
+            400
+        ],
+        [
+            500,
+            600,
+            700,
+            800
+        ],
+        [
+            900,
+            1000,
+            1100,
+            1200
+        ]
+    ],
+    "novice_scenarios": [
+        {
+            "thresholds": [
+                555,
+                660,
+                745,
+                800
+            ],
+            "subcategoryId": 1,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                390,
+                500,
+                600,
+                720
+            ],
+            "subcategoryId": 1,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                820,
+                915,
+                1010,
+                1110
+            ],
+            "subcategoryId": 2,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                990,
+                1090,
+                1190,
+                1290
+            ],
+            "subcategoryId": 2,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                620,
+                740,
+                850,
+                980
+            ],
+            "subcategoryId": 7,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                375,
+                460,
+                540,
+                640
+            ],
+            "subcategoryId": 7,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                1900,
+                2325,
+                2775,
+                3050
+            ],
+            "subcategoryId": 3,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2400,
+                2750,
+                3125,
+                3425
+            ],
+            "subcategoryId": 3,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                1525,
+                1900,
+                2250,
+                2650
+            ],
+            "subcategoryId": 4,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2100,
+                2500,
+                2825,
+                3100
+            ],
+            "subcategoryId": 4,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2125,
+                2550,
+                2975,
+                3450
+            ],
+            "subcategoryId": 8,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                1575,
+                1950,
+                2400,
+                2900
+            ],
+            "subcategoryId": 8,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                845,
+                940,
+                1030,
+                1090
+            ],
+            "subcategoryId": 5,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                640,
+                730,
+                810,
+                890
+            ],
+            "subcategoryId": 5,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                315,
+                355,
+                390,
+                430
+            ],
+            "subcategoryId": 6,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                420,
+                460,
+                500,
+                535
+            ],
+            "subcategoryId": 6,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                340,
+                380,
+                420,
+                450
+            ],
+            "subcategoryId": 9,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                290,
+                340,
+                390,
+                445
+            ],
+            "subcategoryId": 9,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        }
+    ],
+    "intermediate_scenarios": [
+        {
+            "thresholds": [
+                770,
+                850,
+                930,
+                980
+            ],
+            "subcategoryId": 1,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                600,
+                690,
+                780,
+                860
+            ],
+            "subcategoryId": 1,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                1120,
+                1220,
+                1300,
+                1380
+            ],
+            "subcategoryId": 2,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                1310,
+                1400,
+                1490,
+                1560
+            ],
+            "subcategoryId": 2,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                940,
+                1040,
+                1140,
+                1230
+            ],
+            "subcategoryId": 7,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                610,
+                690,
+                770,
+                860
+            ],
+            "subcategoryId": 7,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2275,
+                2675,
+                3050,
+                3325
+            ],
+            "subcategoryId": 3,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2800,
+                3175,
+                3500,
+                3750
+            ],
+            "subcategoryId": 3,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2175,
+                2550,
+                2900,
+                3175
+            ],
+            "subcategoryId": 4,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2550,
+                2850,
+                3100,
+                3350
+            ],
+            "subcategoryId": 4,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2775,
+                3200,
+                3550,
+                3875
+            ],
+            "subcategoryId": 8,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2750,
+                3175,
+                3525,
+                3825
+            ],
+            "subcategoryId": 8,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                1110,
+                1180,
+                1230,
+                1280
+            ],
+            "subcategoryId": 5,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                880,
+                950,
+                1020,
+                1080
+            ],
+            "subcategoryId": 5,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                390,
+                430,
+                460,
+                490
+            ],
+            "subcategoryId": 6,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                520,
+                570,
+                610,
+                650
+            ],
+            "subcategoryId": 6,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                420,
+                460,
+                485,
+                520
+            ],
+            "subcategoryId": 9,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                450,
+                490,
+                540,
+                580
+            ],
+            "subcategoryId": 9,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        }
+    ],
+    "advanced_scenarios": [
+        {
+            "thresholds": [
+                910,
+                1020,
+                1110,
+                1240
+            ],
+            "subcategoryId": 1,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                680,
+                800,
+                910,
+                1020
+            ],
+            "subcategoryId": 1,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                1320,
+                1420,
+                1520,
+                1620
+            ],
+            "subcategoryId": 2,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                1510,
+                1610,
+                1720,
+                1860
+            ],
+            "subcategoryId": 2,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                1090,
+                1220,
+                1360,
+                1490
+            ],
+            "subcategoryId": 7,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                740,
+                830,
+                920,
+                1050
+            ],
+            "subcategoryId": 7,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2750,
+                3175,
+                3625,
+                4050
+            ],
+            "subcategoryId": 3,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                3050,
+                3425,
+                3725,
+                4050
+            ],
+            "subcategoryId": 3,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2750,
+                3175,
+                3525,
+                3825
+            ],
+            "subcategoryId": 4,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                2875,
+                3200,
+                3500,
+                3725
+            ],
+            "subcategoryId": 4,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                3150,
+                3550,
+                3875,
+                4250
+            ],
+            "subcategoryId": 8,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                3100,
+                3475,
+                3800,
+                4125
+            ],
+            "subcategoryId": 8,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                1280,
+                1360,
+                1420,
+                1500
+            ],
+            "subcategoryId": 5,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                1020,
+                1120,
+                1200,
+                1280
+            ],
+            "subcategoryId": 5,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                430,
+                470,
+                510,
+                540
+            ],
+            "subcategoryId": 6,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                540,
+                600,
+                660,
+                720
+            ],
+            "subcategoryId": 6,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                450,
+                490,
+                520,
+                550
+            ],
+            "subcategoryId": 9,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        },
+        {
+            "thresholds": [
+                530,
+                580,
+                630,
+                670
+            ],
+            "subcategoryId": 9,
+            "score": null,
+            "task_id": null,
+            "weapon_id": null
+        }
+    ]
+}

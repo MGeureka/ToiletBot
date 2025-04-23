@@ -1,0 +1,18 @@
+#ignore .env
+.env
+
+#ignore all logs
+*.log
+
+#ignore db files
+*.db
+
+#ignore all .prof
+*.prof
+
+.idea/
+__pycache__/
+data/
+logs/
+temp/
+cache/

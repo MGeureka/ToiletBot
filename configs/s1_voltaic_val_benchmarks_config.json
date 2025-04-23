@@ -1,0 +1,825 @@
+{
+    "categories": [
+        {
+            "id": 4,
+            "subcategories": [
+                {
+                    "id": 10
+                },
+                {
+                    "id": 11
+                },
+                {
+                    "id": 12
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "subcategories": [
+                {
+                    "id": 13
+                },
+                {
+                    "id": 14
+                },
+                {
+                    "id": 15
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "subcategories": [
+                {
+                    "id": 16
+                },
+                {
+                    "id": 17
+                }
+            ]
+        }
+    ],
+    "tier_energies": [
+        [
+            100,
+            200,
+            300,
+            400
+        ],
+        [
+            500,
+            600,
+            700,
+            800
+        ],
+        [
+            900,
+            1000,
+            1100,
+            1200
+        ]
+    ],
+    "novice_scenarios": [
+        {
+            "thresholds": [
+                400,
+                500,
+                600,
+                700
+            ],
+            "subcategoryId": 10,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Float.RSM6A6",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                150,
+                300,
+                450,
+                600
+            ],
+            "subcategoryId": 10,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Angle.ROAHX3",
+            "weapon_id": "Custom_Zaclicker"
+        },
+        {
+            "thresholds": [
+                300,
+                400,
+                500,
+                600
+            ],
+            "subcategoryId": 10,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Adjus.RTUQMP",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                1500,
+                1700,
+                1900,
+                2100
+            ],
+            "subcategoryId": 11,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT DotTS.ROCEI4",
+            "weapon_id": "Custom_3000rpm"
+        },
+        {
+            "thresholds": [
+                500,
+                600,
+                700,
+                800
+            ],
+            "subcategoryId": 11,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Mini .RO6WXU",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                500,
+                600,
+                700,
+                800
+            ],
+            "subcategoryId": 11,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Fours.RO4LXQ",
+            "weapon_id": "Custom_VTnoADS"
+        },
+        {
+            "thresholds": [
+                5000,
+                5400,
+                5800,
+                6200
+            ],
+            "subcategoryId": 12,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT 1w1t .ROCDQR",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                3850,
+                4400,
+                4950,
+                5500
+            ],
+            "subcategoryId": 12,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Wider.ROEHRQ",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                200,
+                300,
+                400,
+                500
+            ],
+            "subcategoryId": 13,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.ROI4IE",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                450,
+                600,
+                750,
+                900
+            ],
+            "subcategoryId": 13,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Angle.ROG6Y1",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                750,
+                850,
+                950,
+                1050
+            ],
+            "subcategoryId": 13,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Skycl.RONRUV",
+            "weapon_id": "Custom_LG56MultiV2"
+        },
+        {
+            "thresholds": [
+                20,
+                40,
+                60,
+                80
+            ],
+            "subcategoryId": 14,
+            "score": null,
+            "task_id": "CsLevel.EmpireDeadman.VT Angel.RSOD8J",
+            "weapon_id": "Custom_VTDeadShot"
+        },
+        {
+            "thresholds": [
+                50,
+                65,
+                80,
+                95
+            ],
+            "subcategoryId": 14,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT MiniT.RSM77B",
+            "weapon_id": "Custom_rA100HzSetLeaderboar"
+        },
+        {
+            "thresholds": [
+                650,
+                800,
+                950,
+                1100
+            ],
+            "subcategoryId": 14,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.RSM85K",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                2075,
+                2575,
+                3075,
+                3575
+            ],
+            "subcategoryId": 15,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Peeks.ROCNRK",
+            "weapon_id": "Custom_LG56Click"
+        },
+        {
+            "thresholds": [
+                925,
+                975,
+                1025,
+                1075
+            ],
+            "subcategoryId": 15,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.RTUMO2",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                400,
+                500,
+                600,
+                700
+            ],
+            "subcategoryId": 15,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.ROLMYC",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                1600,
+                2200,
+                2800,
+                3400
+            ],
+            "subcategoryId": 16,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Contr.RU7JIR",
+            "weapon_id": "Custom_VoltaicZapper"
+        },
+        {
+            "thresholds": [
+                2025,
+                2175,
+                2325,
+                2475
+            ],
+            "subcategoryId": 16,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Peekt.ROLW7A",
+            "weapon_id": "Custom_VoltaicZapper3"
+        },
+        {
+            "thresholds": [
+                2775,
+                2975,
+                3175,
+                3375
+            ],
+            "subcategoryId": 17,
+            "score": null,
+            "task_id": "CsLevel.EmpireDeadman.VT Angle.RSOCZG",
+            "weapon_id": "Custom_VTDeadTrack"
+        },
+        {
+            "thresholds": [
+                1800,
+                2000,
+                2200,
+                2400
+            ],
+            "subcategoryId": 17,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Adjus.ROJF3J",
+            "weapon_id": "Custom_VoltaicZapper"
+        }
+    ],
+    "intermediate_scenarios": [
+        {
+            "thresholds": [
+                750,
+                850,
+                950,
+                1050
+            ],
+            "subcategoryId": 10,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Adjus.RTUQMP",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                700,
+                800,
+                900,
+                1000
+            ],
+            "subcategoryId": 10,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Float.RSM61S",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                550,
+                700,
+                850,
+                1000
+            ],
+            "subcategoryId": 10,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Angle.ROAHK9",
+            "weapon_id": "Custom_Zaclicker"
+        },
+        {
+            "thresholds": [
+                950,
+                1050,
+                1150,
+                1250
+            ],
+            "subcategoryId": 11,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Mini .RO6WXU",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                925,
+                1025,
+                1125,
+                1225
+            ],
+            "subcategoryId": 11,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Fours.RO4LXQ",
+            "weapon_id": "Custom_VTnoADS"
+        },
+        {
+            "thresholds": [
+                2150,
+                2350,
+                2550,
+                2750
+            ],
+            "subcategoryId": 11,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT DotTS.ROCEC8",
+            "weapon_id": "Custom_3000rpm"
+        },
+        {
+            "thresholds": [
+                6200,
+                6600,
+                7000,
+                7400
+            ],
+            "subcategoryId": 12,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT 1w1t .ROCDJW",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                5550,
+                6100,
+                6650,
+                7200
+            ],
+            "subcategoryId": 12,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Wider.ROEHBY",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                400,
+                600,
+                800,
+                1000
+            ],
+            "subcategoryId": 13,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.ROI47X",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                900,
+                1050,
+                1200,
+                1350
+            ],
+            "subcategoryId": 13,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Angle.ROG6UF",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                950,
+                1050,
+                1150,
+                1250
+            ],
+            "subcategoryId": 13,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Skycl.RONRPF",
+            "weapon_id": "Custom_LG56MultiV2"
+        },
+        {
+            "thresholds": [
+                75,
+                95,
+                115,
+                135
+            ],
+            "subcategoryId": 14,
+            "score": null,
+            "task_id": "CsLevel.EmpireDeadman.VT Angel.RSOD4F",
+            "weapon_id": "Custom_VTDeadShot"
+        },
+        {
+            "thresholds": [
+                95,
+                105,
+                115,
+                125
+            ],
+            "subcategoryId": 14,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT MiniT.RSM6Z5",
+            "weapon_id": "Custom_rA100HzSetLeaderboar"
+        },
+        {
+            "thresholds": [
+                1100,
+                1250,
+                1400,
+                1550
+            ],
+            "subcategoryId": 14,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.RSM7Y0",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                1125,
+                1175,
+                1225,
+                1275
+            ],
+            "subcategoryId": 15,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.RTUMO2",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                800,
+                900,
+                1000,
+                1100
+            ],
+            "subcategoryId": 15,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.ROLMYC",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                3575,
+                4075,
+                4575,
+                5075
+            ],
+            "subcategoryId": 15,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Peeks.ROCNDN",
+            "weapon_id": "Custom_LG56Click"
+        },
+        {
+            "thresholds": [
+                3550,
+                4150,
+                4750,
+                5350
+            ],
+            "subcategoryId": 16,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Contr.RU7INB",
+            "weapon_id": "Custom_VoltaicZapper"
+        },
+        {
+            "thresholds": [
+                2475,
+                2625,
+                2775,
+                2925
+            ],
+            "subcategoryId": 16,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Peekt.ROLVU0",
+            "weapon_id": "Custom_VoltaicZapper3"
+        },
+        {
+            "thresholds": [
+                3375,
+                3575,
+                3775,
+                3975
+            ],
+            "subcategoryId": 17,
+            "score": null,
+            "task_id": "CsLevel.EmpireDeadman.VT Angle.RSOCTO",
+            "weapon_id": "Custom_VTDeadTrack"
+        },
+        {
+            "thresholds": [
+                2400,
+                2600,
+                2800,
+                3000
+            ],
+            "subcategoryId": 17,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Adjus.ROJETY",
+            "weapon_id": "Custom_VoltaicZapper"
+        }
+    ],
+    "advanced_scenarios": [
+        {
+            "thresholds": [
+                950,
+                1050,
+                1150,
+                1250
+            ],
+            "subcategoryId": 10,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Float.RRKM0A",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                900,
+                1050,
+                1200,
+                1300
+            ],
+            "subcategoryId": 10,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Angle.RO5NQH",
+            "weapon_id": "Custom_Zaclicker"
+        },
+        {
+            "thresholds": [
+                950,
+                1050,
+                1150,
+                1250
+            ],
+            "subcategoryId": 10,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Twosh.RTUOMZ",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                1300,
+                1400,
+                1600,
+                1700
+            ],
+            "subcategoryId": 11,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Mini .RO6WXU",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                1300,
+                1375,
+                1475,
+                1575
+            ],
+            "subcategoryId": 11,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Fours.RO4LXQ",
+            "weapon_id": "Custom_VTnoADS"
+        },
+        {
+            "thresholds": [
+                2650,
+                2800,
+                3000,
+                3200
+            ],
+            "subcategoryId": 11,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT DotTS.RO5AHK",
+            "weapon_id": "Custom_3000rpm"
+        },
+        {
+            "thresholds": [
+                7250,
+                7700,
+                8150,
+                8600
+            ],
+            "subcategoryId": 12,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT 1w1t .RO5GEB",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                7100,
+                7650,
+                8200,
+                8750
+            ],
+            "subcategoryId": 12,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Angle.ROE3C6",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                850,
+                1050,
+                1250,
+                1450
+            ],
+            "subcategoryId": 13,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.ROGGPP",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                1325,
+                1475,
+                1625,
+                1725
+            ],
+            "subcategoryId": 13,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Angle.ROG08P",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                1125,
+                1225,
+                1325,
+                1425
+            ],
+            "subcategoryId": 13,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.RONNX5",
+            "weapon_id": "Custom_LG56MultiV2"
+        },
+        {
+            "thresholds": [
+                130,
+                145,
+                165,
+                185
+            ],
+            "subcategoryId": 14,
+            "score": null,
+            "task_id": "CsLevel.EmpireDeadman.VT Angel.RRJ0K0",
+            "weapon_id": "Custom_VTDeadShot"
+        },
+        {
+            "thresholds": [
+                115,
+                125,
+                135,
+                145
+            ],
+            "subcategoryId": 14,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT MiniT.RRKPVO",
+            "weapon_id": "Custom_rA100hz"
+        },
+        {
+            "thresholds": [
+                1500,
+                1650,
+                1800,
+                1950
+            ],
+            "subcategoryId": 14,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.RRKNSK",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                1200,
+                1300,
+                1400,
+                1500
+            ],
+            "subcategoryId": 15,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.ROLMYC",
+            "weapon_id": "Custom_LG56Clicker3"
+        },
+        {
+            "thresholds": [
+                4800,
+                5300,
+                5800,
+                6300
+            ],
+            "subcategoryId": 15,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Peeks.ROCEZS",
+            "weapon_id": "Custom_LG56Click"
+        },
+        {
+            "thresholds": [
+                1250,
+                1300,
+                1350,
+                1400
+            ],
+            "subcategoryId": 15,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Micro.RTUMYE",
+            "weapon_id": "Custom_LG56CLICKER4"
+        },
+        {
+            "thresholds": [
+                5100,
+                5500,
+                5900,
+                6300
+            ],
+            "subcategoryId": 16,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Contr.RU7D62",
+            "weapon_id": "Custom_VoltaicZapper"
+        },
+        {
+            "thresholds": [
+                2750,
+                2900,
+                3050,
+                3200
+            ],
+            "subcategoryId": 16,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Peekt.ROLS0T",
+            "weapon_id": "Custom_VoltaicZapper3"
+        },
+        {
+            "thresholds": [
+                3925,
+                4150,
+                4375,
+                4600
+            ],
+            "subcategoryId": 17,
+            "score": null,
+            "task_id": "CsLevel.EmpireDeadman.VT Angle.RRKPJ5",
+            "weapon_id": "Custom_VTDeadTrack"
+        },
+        {
+            "thresholds": [
+                2600,
+                2800,
+                3000,
+                3200
+            ],
+            "subcategoryId": 17,
+            "score": null,
+            "task_id": "CsLevel.Lowgravity56.VT Adjus.ROJCI3",
+            "weapon_id": "Custom_VoltaicZapper"
+        }
+    ]
+}
