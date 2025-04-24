@@ -54,39 +54,39 @@ class DatabaseCommands(commands.Cog):
         self.updating = False
 
 
-    @app_commands.command(name="run",
-                          description="Starts the background loop which updates the database every 10 minutes")
-    @is_correct_author()
-    @is_correct_channel()
-    async def run(self, interaction: discord.Interaction):
-        await interaction.response.defer(ephemeral=True)
-        user_nick = interaction.user.display_name
-        user_id = interaction.user.id
-
-        try:
-        # Create a temporary function to run the profiling
-            async def profiled_func():
-                await self.refresh_leaderboards()
-
-            # Run the profiler in a way that works with async functions
-            profiler = cProfile.Profile()
-            profiler.enable()
-
-            # Run the async function
-            await profiled_func()
-
-            profiler.disable()
-            profile_path = "leaderboard_profile.prof"
-            profiler.dump_stats(profile_path)
-            await interaction.followup.send("Success")
-        except Exception as e:
-            logger.error(
-                f"{user_nick} ({user_id}) ran /run with "
-                f"-> Unexpected error: "
-                f"{str(e)}\n{traceback.format_exc()}"
-            )
-            await interaction.followup.send(f"Ran into an unexpected error "
-                                            f"(oopsie teehee).\n\n{str(e)}")
+    # @app_commands.command(name="run",
+    #                       description="Starts the background loop which updates the database every 10 minutes")
+    # @is_correct_author()
+    # @is_correct_channel()
+    # async def run(self, interaction: discord.Interaction):
+    #     await interaction.response.defer(ephemeral=True)
+    #     user_nick = interaction.user.display_name
+    #     user_id = interaction.user.id
+    #
+    #     try:
+    #     # Create a temporary function to run the profiling
+    #         async def profiled_func():
+    #             await self.refresh_leaderboards()
+    #
+    #         # Run the profiler in a way that works with async functions
+    #         profiler = cProfile.Profile()
+    #         profiler.enable()
+    #
+    #         # Run the async function
+    #         await profiled_func()
+    #
+    #         profiler.disable()
+    #         profile_path = "leaderboard_profile.prof"
+    #         profiler.dump_stats(profile_path)
+    #         await interaction.followup.send("Success")
+    #     except Exception as e:
+    #         logger.error(
+    #             f"{user_nick} ({user_id}) ran /run with "
+    #             f"-> Unexpected error: "
+    #             f"{str(e)}\n{traceback.format_exc()}"
+    #         )
+    #         await interaction.followup.send(f"Ran into an unexpected error "
+    #                                         f"(oopsie teehee).\n\n{str(e)}")
 
 
     @app_commands.command(name="start_leaderboard_updates",

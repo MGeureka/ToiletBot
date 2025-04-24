@@ -3,7 +3,8 @@ from PIL import Image, ImageDraw, ImageFont
 from configs.leaderboard_config import LEADERBOARD_RENDER_CONFIG
 from settings import (AVATAR_CACHE_DIR, AVATAR_CACHE_LOCK,
                       VALORANT_RANK_IMAGES_DIR, LEADERBOARD_TEMPLATE_DIR,
-                      VOLTAIC_RANK_IMAGES_DIR, VOLTAIC_VAL_RANK_IMAGES_DIR)
+                      VOLTAIC_RANK_IMAGES_DIR, VOLTAIC_VAL_RANK_IMAGES_DIR,
+                      FONTS_DIR)
 
 
 # Constants
@@ -19,10 +20,10 @@ HIGHLIGHT_COLOR = (255, 215, 0)  # Gold color for top 3
 
 
 # Specify the path to your font files or use a default font
-title_font = ImageFont.truetype("../assets/fonts/arial.ttf", 60)
-header_font = ImageFont.truetype("../assets/fonts/arial.ttf", 45)
-regular_font = ImageFont.truetype("../assets/fonts/arial.ttf", 45)
-footer_font = ImageFont.truetype("../assets/fonts/arial.ttf", 24)
+title_font = ImageFont.truetype(FONTS_DIR / "arial.ttf", 60)
+header_font = ImageFont.truetype(FONTS_DIR / "arial.ttf", 45)
+regular_font = ImageFont.truetype(FONTS_DIR / "arial.ttf", 45)
+footer_font = ImageFont.truetype(FONTS_DIR / "arial.ttf", 24)
 
 
 class LeaderboardRenderer:
