@@ -1,5 +1,5 @@
 import json
-import aiohttp, aiofiles
+import aiohttp, aiofiles, asyncio
 from functools import partial
 from typing import Any
 
@@ -166,9 +166,9 @@ async def teardown(bot):
     await close_session()
 
 
-if __name__ == "__main__":
-    import asyncio
-    loop = asyncio.new_event_loop()
-    loop.run_until_complete(setup(None))
-    loop.run_until_complete(fetch_s1_val_benchmarks(aimlabs_id="ADC126093FDFBA6"))
+# if __name__ == "__main__":
+#     import asyncio
+#     loop = asyncio.new_event_loop()
+#     loop.run_until_complete(setup(None))
+#     loop.run_until_complete(fetch_s1_val_benchmarks(aimlabs_id="ADC126093FDFBA6"))
 
