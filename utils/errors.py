@@ -20,6 +20,12 @@ class UnableToUpdateDatabase(Exception):
         super().__init__(message)
 
 
+class UnableToDecodeJson(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(message)
+
+
 class ErrorFetchingData(WeakError): pass
 class ProfileDoesntExist(WeakError): pass
 class UsernameAlreadyExists(WeakError): pass

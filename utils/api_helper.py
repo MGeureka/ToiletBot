@@ -2,9 +2,12 @@ from datetime import datetime, timezone
 import asyncio, aiofiles
 import time, os
 from functools import wraps
+
+import aiohttp
+
 from settings import API_HEADER_FIELDS
 from utils.log import api_logger
-from utils.errors import ErrorFetchingData
+from utils.errors import ErrorFetchingData, UnableToDecodeJson
 import json
 FILE_LOCK = asyncio.Lock()
 
@@ -37,8 +40,8 @@ class AsyncRateLimiter:
                             self.remaining_calls = API_HEADER_FIELDS[self.api_type]["rate_limit"]
 
             # Execute the API call
-            data, headers = None, {}
-            runtime = None
+            data, headers = {}, {}
+            runtime = -1000
             try:
                 start_time = time.time()
                 result = await func(*args, **kwargs)
@@ -135,6 +138,14 @@ async def update_benchmark_scenario_list(url: str, path: str, session):
         raise ErrorFetchingData(f"Error while fetching scenario "
                                 f"list for S5 benchmarks "
                                 f"\n\nStatus code: {response.status}. {str(e)}")
+
+
+async def get_json(response: aiohttp.ClientResponse):
+    try:
+        data = await response.json()
+        return data
+    except Exception as e:
+        raise UnableToDecodeJson(" ")
 
 
 async def setup(bot): pass
