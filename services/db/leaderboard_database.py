@@ -56,7 +56,8 @@ async def update_valorant_dm_leaderboard():
         )
         VALUES(?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT (discord_id) DO UPDATE SET
-            dm_count = dm_count + excluded.dm_count,
+            dm = excluded.dm,
+            dm_count = excluded.dm_count,
             date_updated = excluded.date_updated
     """
     valorant_profiles = await get_valorant_profiles()
