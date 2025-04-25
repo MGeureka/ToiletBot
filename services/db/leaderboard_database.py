@@ -72,7 +72,10 @@ async def update_valorant_dm_leaderboard():
                                       "valorant_dm_leaderboard")
         # print(discord_username)
         # print(dm_json)
-        dms = json.loads(dm_json[0][0]) if dm_json else []
+        dms = []
+        if dm_json:
+            if dm_json[0][0] != '':
+                dms = json.loads(dm_json[0][0])
         lower_bound_dt = get_last_monday_12am_est()
         dms = [match for match in dms if get_datetime(match['date']) >= lower_bound_dt]
         data_dm, data_tdm = \
