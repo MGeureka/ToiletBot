@@ -2,7 +2,9 @@ from settings import DB_PATH
 import aiosqlite
 import uuid, aiofiles, json
 from utils.log import log_transaction
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
+
 from settings import (S5_VOLTAIC_BENCHMARKS_CONFIG,
                       S5_VOLTAIC_RANKS,
                       S5_VOLTAIC_RANKS_COMPLETE,
@@ -314,6 +316,15 @@ async def calculate_energy(novice, intermediate, advanced, bench_type: str):
                 ranks_complete[rounded_energy]['id'], energy)
     return (ranks[rounded_energy]['name'],
             ranks[rounded_energy]['id'], energy)
+
+
+def get_last_monday_12am_est() -> datetime:
+    now_utc = datetime.now(timezone.utc)
+    now_est = now_utc.astimezone(ZoneInfo("America/New_York"))
+    days_since_monday = now_est.weekday()  # Monday is 0
+    last_monday = now_est - timedelta(days=days_since_monday)
+    last_monday = last_monday.replace(hour=0, minute=0, second=0, microsecond=0)
+    return last_monday.astimezone(timezone.utc)
 
 
 async def setup(bot): pass

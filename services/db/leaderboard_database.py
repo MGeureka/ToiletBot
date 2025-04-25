@@ -1,9 +1,10 @@
 from datetime import datetime, timezone
-import asyncio
+import asyncio, json
 from utils.database_helper import (get_valorant_profiles, executemany_commit,
                                    get_date_updated, get_datetime,
                                    execute_fetch, get_kovaaks_profiles,
-                                   calculate_energy, get_aimlabs_profiles)
+                                   calculate_energy, get_aimlabs_profiles,
+                                   get_last_monday_12am_est)
 from services.api.val_api import fetch_rating, fetch_dms
 from services.api.kovaaks_api import (get_s5_novice_benchmark_scores,
                                       get_s5_intermediate_benchmark_scores,
@@ -51,9 +52,9 @@ async def update_valorant_dm_leaderboard():
     sql_statement = """
         INSERT INTO valorant_dm_leaderboard (
             discord_id, discord_username, valorant_id, 
-            valorant_username, valorant_tag, dm_count, date_updated
+            valorant_username, valorant_tag, date_updated, dm, dm_count
         )
-        VALUES(?, ?, ?, ?, ?, ?, ?)
+        VALUES(?, ?, ?, ?, ?, ?, ?, ?)
         ON CONFLICT (discord_id) DO UPDATE SET
             dm_count = dm_count + excluded.dm_count,
             date_updated = excluded.date_updated
@@ -63,31 +64,41 @@ async def update_valorant_dm_leaderboard():
     async def process_profile(profile):
         (discord_id, discord_username, valorant_id, valorant_username,
          valorant_tag, region) = profile
-        dt = await (
-            get_date_updated(discord_id, "valorant_dm_leaderboard"))
-        if dt is None:
-            dt = await (
-                get_date_updated(discord_id, "valorant_profiles"))
+        dm_json = await execute_fetch(f"SELECT dm from "
+                                      f"valorant_dm_leaderboard "
+                                      f"WHERE discord_id = ?",
+                                      (discord_id,),
+                                      "valorant_dm_leaderboard")
+        dms = json.loads(dm_json[0][0]) if dm_json[0][0] else []
+        lower_bound_dt = get_last_monday_12am_est()
+        dms = [match for match in dms if get_datetime(match['date']) >= lower_bound_dt]
+        data_dm, data_tdm = \
+            await asyncio.gather(
+                fetch_dms(valorant_id, region,"deathmatch"),
+                fetch_dms(valorant_id,region,"teamdeathmatch")
+            )
 
-        data_dm = await fetch_dms(valorant_id, region,
-                                  "deathmatch")
-        data_tdm = await fetch_dms(valorant_id, region,
-                                   "teamdeathmatch")
-        dates_dm = [get_datetime(i['metadata']['started_at'])
-                    for i in data_dm['data']]
-        dates_tdm = [get_datetime(i['metadata']['started_at'])
-                     for i in data_tdm['data']]
-        new_dm_count = len([i for i in dates_dm if i > dt])
-        new_dm_count += len([i for i in dates_tdm if i > dt])
+        new_matches = [{"id": match['metadata']['match_id'],
+                        "date": match['metadata']['started_at']}
+                       for match in (data_dm['data'] + data_tdm['data'])
+                       if get_datetime(match['metadata']['started_at']) >= lower_bound_dt]
 
+        existing_ids = {match["id"] for match in dms}
+        for match in new_matches:
+            if match["id"] not in existing_ids:
+                dms.append(match)
+
+        dm_json_str = json.dumps(dms)
+        dm_count = len(dms)
         return (discord_id, discord_username, valorant_id, valorant_username,
-                valorant_tag, new_dm_count,
-                datetime.now(timezone.utc).isoformat())
+                valorant_tag, datetime.now(timezone.utc).isoformat(),
+                dm_json_str, dm_count)
 
     all_values = await asyncio.gather(*[process_profile(profile) for profile in valorant_profiles])
     await executemany_commit(sql_statement, all_values,
                              "valorant_dm_leaderboard",
                              "UPSERT")
+    print([value[7] for value in all_values])
 
 
 async def update_voltaic_s5_leaderboard():
@@ -167,6 +178,19 @@ async def update_voltaic_val_s1_leaderboard():
                              "UPSERT")
 
 
+async def get_dm_matches_fromdb():
+    valorant_profiles = await get_valorant_profiles()
+    profile_ids = [profile[0] for profile in valorant_profiles]
+    sql_statement = f"""
+        SELECT dm
+        FROM valorant_dm_leaderboard WHERE discord_id in 
+        ({', '.join('?' for _ in profile_ids)})
+    """
+    data = await execute_fetch(sql_statement, tuple(profile_ids),
+                               "valorant_dm_leaderboard")
+    return [i[0] for i in data]
+
+
 async def get_valorant_rank_leaderboard_data():
     valorant_profiles = await get_valorant_profiles()
     profile_ids = [profile[0] for profile in valorant_profiles]
@@ -185,12 +209,13 @@ async def get_valorant_dm_leaderboard_data():
     valorant_profiles = await get_valorant_profiles()
     profile_ids = [profile[0] for profile in valorant_profiles]
     sql_statement = f"""
-        SELECT discord_id, discord_username, dm_count 
+        SELECT discord_id, discord_username, dm_count
         FROM valorant_dm_leaderboard WHERE discord_id in 
-        ({', '.join('?' for _ in profile_ids)}) ORDER BY dm_count DESC
+        ({', '.join('?' for _ in profile_ids)})
     """
     data = await execute_fetch(sql_statement, tuple(profile_ids),
                                "valorant_dm_leaderboard")
+
     sorted_data = sorted(data, key=lambda x: int(x[2]), reverse=True)
     return sorted_data
 
@@ -229,15 +254,14 @@ async def get_voltaic_s1_val_benchmarks_leaderboard_data():
     return sorted_data
 
 
-# if __name__ == "__main__":
-#     import asyncio
-#     # from services.api.kovaaks_api import setup, teardown
-#     new_loop = asyncio.new_event_loop()
-#     # new_loop.run_until_complete(setup(None))
-#     # new_loop.run_until_complete(update_voltaic_s5_leaderboard())
-#     # new_loop.run_until_complete(teardown(None))
-#     data = new_loop.run_until_complete(get_voltaic_s1_val_benchmarks_leaderboard_data())
-#     print(data)
+if __name__ == "__main__":
+    import asyncio
+    from services.api.val_api import setup, teardown
+    new_loop = asyncio.new_event_loop()
+    new_loop.run_until_complete(setup(None))
+    data = new_loop.run_until_complete(update_valorant_dm_leaderboard())
+    new_loop.run_until_complete(teardown(None))
+    # print(data)
 
 async def setup(bot): pass
 async def teardown(bot): pass
