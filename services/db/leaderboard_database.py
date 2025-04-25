@@ -254,14 +254,14 @@ async def get_voltaic_s1_val_benchmarks_leaderboard_data():
     return sorted_data
 
 
-if __name__ == "__main__":
-    import asyncio
-    from services.api.val_api import setup, teardown
-    new_loop = asyncio.new_event_loop()
-    new_loop.run_until_complete(setup(None))
-    data = new_loop.run_until_complete(update_valorant_dm_leaderboard())
-    new_loop.run_until_complete(teardown(None))
-    # print(data)
+# if __name__ == "__main__":
+#     import asyncio
+#     from services.api.val_api import setup, teardown
+#     new_loop = asyncio.new_event_loop()
+#     new_loop.run_until_complete(setup(None))
+#     data = new_loop.run_until_complete(update_valorant_dm_leaderboard())
+#     new_loop.run_until_complete(teardown(None))
+#     # print(data)
 
 async def setup(bot): pass
 async def teardown(bot): pass
