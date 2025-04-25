@@ -69,6 +69,7 @@ async def update_valorant_dm_leaderboard():
                                       f"WHERE discord_id = ?",
                                       (discord_id,),
                                       "valorant_dm_leaderboard")
+        print(dm_json)
         dms = json.loads(dm_json[0][0]) if dm_json[0][0] else []
         lower_bound_dt = get_last_monday_12am_est()
         dms = [match for match in dms if get_datetime(match['date']) >= lower_bound_dt]
@@ -98,7 +99,6 @@ async def update_valorant_dm_leaderboard():
     await executemany_commit(sql_statement, all_values,
                              "valorant_dm_leaderboard",
                              "UPSERT")
-    print([value[7] for value in all_values])
 
 
 async def update_voltaic_s5_leaderboard():
