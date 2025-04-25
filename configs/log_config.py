@@ -29,6 +29,7 @@ LOGGING_CONFIG = {
             "filename": f"{LOGS_DIR}/bot_log.log",
             "mode": "w",
             "formatter": "verbose",
+            "encoding": "utf-8",
         },
         "API_LOG": {
             "level": "INFO",
@@ -36,6 +37,7 @@ LOGGING_CONFIG = {
             "filename": f"{LOGS_DIR}/api_log.log",
             "mode": "w",
             "formatter": "verbose",
+            "encoding": "utf-8",
         }
     },
     "loggers": {
