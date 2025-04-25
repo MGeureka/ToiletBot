@@ -6,8 +6,8 @@ from utils.checks import is_correct_channel, is_correct_author
 from utils.errors import CheckError
 import traceback
 
-
 # https://discord.com/oauth2/authorize?client_id=1352384167513423903&permissions=1689934474247232&integration_type=0&scope=bot+applications.commands
+# https://discord.com/oauth2/authorize?client_id=1352384167513423903&permissions=1689006626958416&integration_type=0&scope=bot+applications.commands
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -16,6 +16,7 @@ intents.messages = True
 intents.guilds = True
 intents.reactions = True
 intents.presences = True
+
 
 bot = commands.Bot(command_prefix='/', intents=intents)
 
@@ -61,8 +62,7 @@ all_extensions = [
 async def on_ready():
     print(f'We have logged in as {bot.user}')
     logger.info(f'We have logged in as {bot.user}')
-
-
+    await bot.tree.sync(guild=discord.Object(id=1333243573440741458))
 @bot.tree.command(name="reload", description="Reload bot commands. Ctrl+r on "
                                              "discord if they don't update. "
                                              "This may take a minute.")
@@ -98,7 +98,7 @@ async def reload(interaction: discord.Interaction):
 @reload.error
 async def reload_error(interaction, e):
     if isinstance(e, CheckError):
-        logger.warning(f"{interaction.user.nick or interaction.user.name} "
+        logger.warning(f"{interaction.user.display_name} "
                        f"({interaction.user.id}) used "
                        f"{interaction.command.name} -> "
                        f"{e.__class__.__name__}: {e.message}")
@@ -114,7 +114,8 @@ async def setup_hook():
             logger.info(f"Loaded extension {extension}")
             print(f"Loaded extension {extension}")
         except Exception as e:
-            logger.error(f"Failed to load extension {extension}")
+            logger.error(f"Failed to load extension {extension}"
+                         f"{str(e)}\n{traceback.format_exc()}")
             print(f"Failed to load extension {extension}: {e}")
     try:
         synced_commands = await bot.tree.sync()

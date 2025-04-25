@@ -371,7 +371,7 @@ class DatabaseCommands(commands.Cog):
         image_tasks = []
         for leaderboard_type in leaderboard_list:
             data = await self.get_data(leaderboard_type)
-            data *= 21
+            # data *= 21
             total_pages = max(1, ((len(data) + leaderboard_page_size - 1) //
                                   leaderboard_page_size))
             async with LEADERBOARD_CACHE_LOCK:
