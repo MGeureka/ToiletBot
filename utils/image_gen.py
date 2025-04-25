@@ -248,4 +248,4 @@ async def teardown(bot): pass
 
 
 # if __name__ == '__main__':
-#     _get_templates("voltaic_S1_valorant_benchmarks_leaderboard")
+#     _get_templates("voltaic_S5_benchmarks_leaderboard")

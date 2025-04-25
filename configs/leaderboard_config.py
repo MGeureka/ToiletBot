@@ -74,7 +74,7 @@ LEADERBOARD_RENDER_CONFIG = {
         data_parser = valorant_dm_parser
     ),
     leaderboard_types_list[2]: LeaderboardRendererConfig(
-        title = "Voltaic S5",
+        title = "Voltaic S5 (Kovaaks)",
         headers = ["#", "User", "Energy - Rank"],
         header_positions = [50, 250, 1540],
         score_position = 1680,
@@ -83,7 +83,7 @@ LEADERBOARD_RENDER_CONFIG = {
         data_parser = voltaic_s5_benchmark_leaderboard_parser
     ),
     leaderboard_types_list[3]: LeaderboardRendererConfig(
-        title = "Voltaic VAL S1",
+        title = "Voltaic VAL S1 (Aimlabs)",
         headers = ["#", "User", "Energy - Rank"],
         header_positions = [50, 250, 1540],
         score_position = 1680,

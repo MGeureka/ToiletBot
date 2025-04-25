@@ -62,7 +62,7 @@ all_extensions = [
 async def on_ready():
     print(f'We have logged in as {bot.user}')
     logger.info(f'We have logged in as {bot.user}')
-    await bot.tree.sync(guild=discord.Object(id=1333243573440741458))
+
 @bot.tree.command(name="reload", description="Reload bot commands. Ctrl+r on "
                                              "discord if they don't update. "
                                              "This may take a minute.")

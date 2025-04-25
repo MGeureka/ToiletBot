@@ -177,7 +177,8 @@ async def get_valorant_rank_leaderboard_data():
     """
     data = await execute_fetch(sql_statement, tuple(profile_ids),
                                "valorant_rank_leaderboard")
-    return data
+    sorted_data = sorted(data, key=lambda x: (int(x[3]), int(x[4])), reverse=True)
+    return sorted_data
 
 
 async def get_valorant_dm_leaderboard_data():
@@ -190,7 +191,8 @@ async def get_valorant_dm_leaderboard_data():
     """
     data = await execute_fetch(sql_statement, tuple(profile_ids),
                                "valorant_dm_leaderboard")
-    return data
+    sorted_data = sorted(data, key=lambda x: int(x[2]), reverse=True)
+    return sorted_data
 
 
 async def get_voltaic_s5_benchmarks_leaderboard_data():
@@ -205,7 +207,8 @@ async def get_voltaic_s5_benchmarks_leaderboard_data():
     """
     data = await execute_fetch(sql_statement, tuple(profile_ids),
                                "voltaic_S5_benchmarks_leaderboard")
-    return data
+    sorted_data = sorted(data, key=lambda x: int(x[4]), reverse=True)
+    return sorted_data
 
 
 async def get_voltaic_s1_val_benchmarks_leaderboard_data():
@@ -222,18 +225,19 @@ async def get_voltaic_s1_val_benchmarks_leaderboard_data():
         sql_statement,
         tuple(profile_ids),
         "voltaic_S1_valorant_benchmarks_leaderboard")
-    return data
+    sorted_data = sorted(data, key=lambda x: int(x[4]), reverse=True)
+    return sorted_data
 
 
-#
 # if __name__ == "__main__":
 #     import asyncio
-#     from services.api.kovaaks_api import setup, teardown
+#     # from services.api.kovaaks_api import setup, teardown
 #     new_loop = asyncio.new_event_loop()
-#     new_loop.run_until_complete(setup(None))
-#     new_loop.run_until_complete(update_voltaic_s5_leaderboard())
-#     new_loop.run_until_complete(teardown(None))
-
+#     # new_loop.run_until_complete(setup(None))
+#     # new_loop.run_until_complete(update_voltaic_s5_leaderboard())
+#     # new_loop.run_until_complete(teardown(None))
+#     data = new_loop.run_until_complete(get_voltaic_s1_val_benchmarks_leaderboard_data())
+#     print(data)
 
 async def setup(bot): pass
 async def teardown(bot): pass
