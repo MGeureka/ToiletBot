@@ -70,6 +70,7 @@ async def update_valorant_dm_leaderboard():
                                       f"WHERE discord_id = ?",
                                       (discord_id,),
                                       "valorant_dm_leaderboard")
+        print(discord_username)
         print(dm_json)
         dms = json.loads(dm_json[0][0]) if dm_json[0][0] else []
         lower_bound_dt = get_last_monday_12am_est()
