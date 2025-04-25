@@ -34,14 +34,14 @@ class ValorantCommands(commands.Cog):
         """
         await interaction.response.defer(ephemeral=True)
 
-        user_nick = interaction.user.nick or interaction.user.name
+        user_nick = interaction.user.display_name
         user_id = interaction.user.id
 
         try:
             puuid, region = await check_valorant_username(username, tag)
 
             response, existing_username = await add_valorant_username_todb(
-                username, tag, puuid, user_nick, interaction.user.id, region)
+                username, tag, puuid, user_nick, user_id, region)
 
             if response:
                 logger.info(f"{user_nick} ({user_id}) ran "
