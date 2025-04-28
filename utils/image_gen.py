@@ -115,19 +115,21 @@ class LeaderboardRenderer:
 
     def draw_rank_icon(self, image, rank_id, row_y, icon_type: str):
         if icon_type == "val":
-            masked_rank_id = Image.open(VALORANT_RANK_IMAGES_DIR / f"{rank_id}.png")
-            masked_rank_id = masked_rank_id.resize((AVATAR_SIZE, AVATAR_SIZE))
+            masked_rank_id = Image.open(VALORANT_RANK_IMAGES_DIR /
+                                        f"{rank_id}.png")
         elif icon_type == "voltaic":
-            masked_rank_id = Image.open(VOLTAIC_RANK_IMAGES_DIR / f"{rank_id}.png")
-            masked_rank_id = masked_rank_id.resize((AVATAR_SIZE - 30, AVATAR_SIZE))
+            masked_rank_id = Image.open(VOLTAIC_RANK_IMAGES_DIR /
+                                        f"{rank_id}.png")
         elif icon_type == "voltaic_val":
             masked_rank_id = Image.open(VOLTAIC_VAL_RANK_IMAGES_DIR /
                                         f"{rank_id}.png")
-            masked_rank_id = masked_rank_id.resize((AVATAR_SIZE, AVATAR_SIZE))
         else:
             return
-
-        avatar_x = self.config.rank_icon_position - AVATAR_SIZE - 15
+        w, h = masked_rank_id.size
+        new_height = AVATAR_SIZE
+        new_width = int(w * (new_height / h))
+        masked_rank_id = masked_rank_id.resize((new_width, new_height))
+        avatar_x = self.config.rank_icon_position - (new_width // 2)
         image.paste(masked_rank_id, (avatar_x, row_y), masked_rank_id)
 
 

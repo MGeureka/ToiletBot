@@ -62,7 +62,7 @@ LEADERBOARD_RENDER_CONFIG = {
         headers = ["#", "User", "Rank (RR)"],
         header_positions = [50, 250, 1560],
         score_position = 1680,
-        rank_icon_position = 1500,
+        rank_icon_position = 1450,
         draw_valorant_rank_icon = True,
         data_parser = valorant_rank_parser
     ),
@@ -78,7 +78,7 @@ LEADERBOARD_RENDER_CONFIG = {
         headers = ["#", "User", "Energy - Rank"],
         header_positions = [50, 250, 1540],
         score_position = 1680,
-        rank_icon_position = 1520,
+        rank_icon_position = 1450,
         draw_voltaic_rank_icon =  True,
         data_parser = voltaic_s5_benchmark_leaderboard_parser
     ),
@@ -87,7 +87,7 @@ LEADERBOARD_RENDER_CONFIG = {
         headers = ["#", "User", "Energy - Rank"],
         header_positions = [50, 250, 1540],
         score_position = 1680,
-        rank_icon_position = 1520,
+        rank_icon_position = 1450,
         draw_voltaic_val_rank_icon =  True,
         data_parser = voltaic_s5_benchmark_leaderboard_parser
     )
