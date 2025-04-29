@@ -284,7 +284,6 @@ async def calculate_energy(novice, intermediate, advanced, bench_type: str):
     ) as f:
         content = await f.read()
         config = json.loads(content)
-    scores = [novice, intermediate, advanced]
     novice_scores = await add_scores_to_config(
         config['novice_scenarios'],novice
     )
@@ -296,21 +295,26 @@ async def calculate_energy(novice, intermediate, advanced, bench_type: str):
     )
     tiers = config['tier_energies']
     categories = config['categories']
-    novice_energy = tier_energy(tiers, 0,
-                                novice_scores,
-                                categories)
-    intermediate_energy = tier_energy(tiers, 1,
-                                      intermediate_scores,
-                                      categories)
-    advanced_energy = tier_energy(tiers, 2,
-                                  advanced_scores,
-                                  categories)
+    novice_energy, novice_energy_list = tier_energy(tiers,
+                                                    0,
+                                                    novice_scores,
+                                                    categories)
+    intermediate_energy, intermediate_energy_list = tier_energy(tiers,
+                                                                1,
+                                                                intermediate_scores,
+                                                                categories)
+    advanced_energy, advanced_energy_list = tier_energy(tiers,
+                                                        2,
+                                                        advanced_scores,
+                                                        categories)
     energies = [novice_energy, intermediate_energy, advanced_energy]
+    energy_list = [novice_energy_list, intermediate_energy_list,
+                   advanced_energy_list]
     energy = max(energies)
     max_index = energies.index(energy)
     rounded_energy = min(((energy // 100) * 100), 1200)
     complete = True if all(score >= rounded_energy
-                           for score in scores[max_index]) else False
+                           for score in energy_list[max_index]) else False
     # print(f"{energy=}")
     # print(f"{rounded_energy=}")
     # print(f"{scores[max_index]=}")

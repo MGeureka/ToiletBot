@@ -177,7 +177,7 @@ def tier_energy(
         current_tier_index: int,
         scenarios: List[Scenario],
         categories: List[Category]
-) -> float:
+) -> tuple[float, List[float]]:
     """
     Calculate the overall energy for a tier based on all categories and subcategories.
     """
@@ -195,6 +195,7 @@ def tier_energy(
             subcategory_energies.append(
                 subcategory_energy(tiers, current_tier_index, subcategory_scenarios)
             )
-    print(f"{subcategory_energies=}")
+    uncapped_energies = [i['uncapped'] for i in subcategory_energies]
     # Calculate harmonics mean across all subcategories
-    return harmonic_mean_of_subcategory_energies(subcategory_energies, tiers)
+    return (harmonic_mean_of_subcategory_energies(subcategory_energies, tiers),
+            uncapped_energies)
