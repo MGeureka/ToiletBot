@@ -311,10 +311,10 @@ async def calculate_energy(novice, intermediate, advanced, bench_type: str):
     rounded_energy = min(((energy // 100) * 100), 1200)
     complete = True if all(score >= rounded_energy
                            for score in scores[max_index]) else False
-    print(f"{energy=}")
-    print(f"{rounded_energy=}")
-    print(f"{scores[max_index]=}")
-    print(f"{complete=}")
+    # print(f"{energy=}")
+    # print(f"{rounded_energy=}")
+    # print(f"{scores[max_index]=}")
+    # print(f"{complete=}")
     if complete:
         return (ranks_complete[rounded_energy]['name'],
                 ranks_complete[rounded_energy]['id'], energy)

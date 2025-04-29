@@ -100,7 +100,6 @@ def uncapped_scenario_energy(
 
     score_above_threshold = scenario["score"] - extended_thresholds[scenario_extended_thresholds_index]
 
-    # Calculate threshold differences (equivalent to the map in TypeScript)
     extended_threshold_differences = []
     for i in range(len(extended_thresholds)):
         if i == len(extended_thresholds) - 1:
@@ -110,7 +109,6 @@ def uncapped_scenario_energy(
 
     scenario_extended_threshold_difference = extended_threshold_differences[scenario_extended_thresholds_index]
 
-    # Calculate energy differences (equivalent to the map in TypeScript)
     extended_rank_energies_differences = []
     for i in range(len(extended_rank_energies)):
         if i == len(extended_rank_energies) - 1:
@@ -197,6 +195,6 @@ def tier_energy(
             subcategory_energies.append(
                 subcategory_energy(tiers, current_tier_index, subcategory_scenarios)
             )
-
+    print(f"{subcategory_energies=}")
     # Calculate harmonics mean across all subcategories
     return harmonic_mean_of_subcategory_energies(subcategory_energies, tiers)
