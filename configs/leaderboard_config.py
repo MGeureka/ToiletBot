@@ -9,7 +9,8 @@ class LeaderboardRenderRow:
     user_id: int
     username: str
     score_display: str
-    rank_id: int = None  # optional
+    rank_id: int = None
+    second_username: str = None
 
 
 @dataclass
@@ -23,6 +24,7 @@ class LeaderboardRendererConfig:
     draw_valorant_rank_icon: bool = False
     draw_voltaic_rank_icon: bool = False
     draw_voltaic_val_rank_icon: bool = False
+    draw_second_username: bool = False
 
 
 def valorant_rank_parser(row):
@@ -46,13 +48,14 @@ def valorant_dm_parser(row):
 
 
 def voltaic_s5_benchmark_leaderboard_parser(row):
-    user_id, username, current_rank, rank_id, energy = row
+    user_id, username, current_rank, rank_id, energy, second_username = row
     score_display = f"{energy} - {current_rank}"
     return LeaderboardRenderRow(
         user_id=user_id,
         username=username,
         score_display=score_display,
         rank_id=rank_id,
+        second_username = second_username,
     )
 
 
@@ -60,35 +63,37 @@ LEADERBOARD_RENDER_CONFIG = {
     leaderboard_types_list[0]: LeaderboardRendererConfig(
         title = "Valorant Rank Leaderboard",
         headers = ["#", "User", "Rank (RR)"],
-        header_positions = [50, 250, 1560],
+        header_positions = [40, 270, 1560],
         score_position = 1680,
-        rank_icon_position = 1450,
+        rank_icon_position = 1430,
         draw_valorant_rank_icon = True,
         data_parser = valorant_rank_parser
     ),
     leaderboard_types_list[1]: LeaderboardRendererConfig(
         title = "Valorant DM and TDM Leaderboard",
         headers = ["#", "User", "DM Count"],
-        header_positions = [50, 250, 1620],
+        header_positions = [40, 270, 1620],
         score_position = 1710,
         data_parser = valorant_dm_parser
     ),
     leaderboard_types_list[2]: LeaderboardRendererConfig(
         title = "Voltaic S5 (Kovaaks)",
         headers = ["#", "User", "Energy - Rank"],
-        header_positions = [50, 250, 1540],
+        header_positions = [40, 270, 1540],
         score_position = 1680,
-        rank_icon_position = 1450,
+        rank_icon_position = 1430,
         draw_voltaic_rank_icon =  True,
+        draw_second_username = True,
         data_parser = voltaic_s5_benchmark_leaderboard_parser
     ),
     leaderboard_types_list[3]: LeaderboardRendererConfig(
         title = "Voltaic VAL S1 (Aimlabs)",
         headers = ["#", "User", "Energy - Rank"],
-        header_positions = [50, 250, 1540],
+        header_positions = [40, 270, 1540],
         score_position = 1680,
-        rank_icon_position = 1450,
+        rank_icon_position = 1430,
         draw_voltaic_val_rank_icon =  True,
+        draw_second_username = True,
         data_parser = voltaic_s5_benchmark_leaderboard_parser
     )
 }

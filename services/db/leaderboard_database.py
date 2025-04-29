@@ -230,7 +230,7 @@ async def get_voltaic_s5_benchmarks_leaderboard_data():
     profile_ids = [profile[0] for profile in kovaaks_profiles]
     sql_statement = f"""
         SELECT discord_id, discord_username, current_rank, current_rank_id, 
-        current_rank_rating
+        current_rank_rating, kovaaks_username
         FROM voltaic_S5_benchmarks_leaderboard WHERE discord_id in 
         ({', '.join('?' for _ in profile_ids)}) 
         ORDER BY current_rank_rating DESC
@@ -246,7 +246,7 @@ async def get_voltaic_s1_val_benchmarks_leaderboard_data():
     profile_ids = [profile[0] for profile in aimlabs_profiles]
     sql_statement = f"""
         SELECT discord_id, discord_username, current_rank, current_rank_id, 
-        current_rank_rating
+        current_rank_rating, aimlabs_username
         FROM voltaic_S1_valorant_benchmarks_leaderboard WHERE discord_id in 
         ({', '.join('?' for _ in profile_ids)}) 
         ORDER BY current_rank_rating DESC

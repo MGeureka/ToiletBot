@@ -1,8 +1,6 @@
 import asyncio
-import base64
-from io import BytesIO
-from discord import File
 from playwright.async_api import async_playwright
+
 
 async def get_voltaic_image(username: str):
     url = f"https://beta.voltaic.gg/aimlabs/{username}"

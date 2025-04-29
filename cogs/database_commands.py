@@ -318,17 +318,17 @@ class DatabaseCommands(commands.Cog):
                 return await get_discord_profiles()
 
 
-    @app_commands.command(name="regen_images", description="Show leaderboards")
-    @is_correct_author()
-    @is_correct_channel()
+    # @app_commands.command(name="regen_images", description="Show leaderboards")
+    # @is_correct_author()
+    # @is_correct_channel()
     async def regen_images(self, interaction: discord.Interaction):
-        await interaction.response.defer(ephemeral=True)
-        user_nick = interaction.user.nick or interaction.user.name
-        user_id = interaction.user.id
+        # await interaction.response.defer(ephemeral=True)
+        # user_nick = interaction.user.nick or interaction.user.name
+        # user_id = interaction.user.id
         try:
             await self.regenerate_discord_leaderboard_images(LEADERBOARD_TYPES)
-            logger.info(f"{user_nick} ({user_id}) used /regen_images")
-            await interaction.followup.send(f"Success")
+            # logger.info(f"{user_nick} ({user_id}) used /regen_images")
+            # await interaction.followup.send(f"Success")
         except Exception as e:
             logger.error(
                 f"{user_nick} ({user_id}) ran /update_leaderboard with "
@@ -431,7 +431,7 @@ async def setup(bot):
         cog.refresh_leaderboards.start()
 
 
-# if __name__ == '__main__':
-#     loop = asyncio.new_event_loop()
-#     cog = DatabaseCommands(None)
-#     loop.run_until_complete(cog.regen_images(None))
+if __name__ == '__main__':
+    loop = asyncio.new_event_loop()
+    cog = DatabaseCommands(None)
+    loop.run_until_complete(cog.regen_images(None))

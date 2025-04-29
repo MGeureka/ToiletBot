@@ -17,13 +17,16 @@ TEXT_COLOR = (255, 255, 255)  # White text
 HEADER_COLOR = (114, 137, 218)  # Discord blurple for headers
 ALT_ROW_COLOR = (47, 49, 54)  # Slightly lighter for alternating rows
 HIGHLIGHT_COLOR = (255, 215, 0)  # Gold color for top 3
+SECOND_USERNAME_COLOR = (255, 255, 255)
 
 
 # Specify the path to your font files or use a default font
-title_font = ImageFont.truetype(FONTS_DIR / "arial.ttf", 60)
-header_font = ImageFont.truetype(FONTS_DIR / "arial.ttf", 45)
-regular_font = ImageFont.truetype(FONTS_DIR / "arial.ttf", 45)
-footer_font = ImageFont.truetype(FONTS_DIR / "arial.ttf", 24)
+title_font = ImageFont.truetype(FONTS_DIR / "Poppins-Regular.ttf", 60)
+header_font = ImageFont.truetype(FONTS_DIR / "Poppins-Regular.ttf", 45)
+regular_font = ImageFont.truetype(FONTS_DIR / "Poppins-Regular.ttf", 45)
+footer_font = ImageFont.truetype(FONTS_DIR / "Poppins-Regular.ttf", 24)
+second_username_font = ImageFont.truetype(FONTS_DIR / "Poppins-Light.ttf",
+                                          26)
 
 
 class LeaderboardRenderer:
@@ -173,13 +176,26 @@ class LeaderboardRenderer:
                 font=regular_font
             )
 
-            # Draw username
-            draw.text(
-                (self.config.header_positions[1], row_y + 20),
-                username,
-                fill=TEXT_COLOR,
-                font=regular_font
-            )
+            if self.config.draw_second_username:
+                draw.text(
+                    (self.config.header_positions[1], row_y),
+                    username,
+                    fill=TEXT_COLOR,
+                    font=regular_font
+                )
+                draw.text(
+                    (self.config.header_positions[1] + 5, row_y + 55),
+                    parsed.second_username,
+                    fill=SECOND_USERNAME_COLOR,
+                    font=second_username_font
+                )
+            else:
+                draw.text(
+                    (self.config.header_positions[1], row_y + 20),
+                    username,
+                    fill=TEXT_COLOR,
+                    font=regular_font
+                )
 
             # Draw score
             bbox = draw.textbbox((0, 0), score, font=regular_font)
