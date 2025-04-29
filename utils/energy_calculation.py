@@ -172,6 +172,17 @@ def harmonic_mean_of_subcategory_energies(
     return 0 if math.isnan(capped) else math.floor(capped)
 
 
+def get_all_scenario_energies(
+        tiers: List[TierEnergies],
+        current_tier_index: int,
+        scenarios: List[Scenario]
+) -> List[float]:
+    return [
+        uncapped_scenario_energy(scenario, tiers, current_tier_index)
+        for scenario in scenarios
+    ]
+
+
 def tier_energy(
         tiers: List[TierEnergies],
         current_tier_index: int,
@@ -182,7 +193,7 @@ def tier_energy(
     Calculate the overall energy for a tier based on all categories and subcategories.
     """
     subcategory_energies = []
-
+    all_energies = []
     for category in categories:
         for subcategory in category["subcategories"]:
             # Filter scenarios that belong to this subcategory
@@ -195,7 +206,10 @@ def tier_energy(
             subcategory_energies.append(
                 subcategory_energy(tiers, current_tier_index, subcategory_scenarios)
             )
-    uncapped_energies = [i['uncapped'] for i in subcategory_energies]
+            all_energies.extend(
+                get_all_scenario_energies(tiers, current_tier_index, subcategory_scenarios)
+            )
+
     # Calculate harmonics mean across all subcategories
     return (harmonic_mean_of_subcategory_energies(subcategory_energies, tiers),
-            uncapped_energies)
+            all_energies)
