@@ -349,6 +349,8 @@ class DatabaseCommands(commands.Cog):
                     return
             try:
                 user = self.bot.get_user(user_id)
+                if user is None:
+                    return
                 asset = user.display_avatar or user.default_avatar
                 avatar_bytes = await asset.read()
                 avatar = Image.open(BytesIO(avatar_bytes))
