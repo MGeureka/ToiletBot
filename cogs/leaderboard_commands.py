@@ -10,7 +10,6 @@ from utils.database_helper import (get_leaderboard_message_state,
                                    update_leaderboard_message_state)
 from settings import (LEADERBOARD_TYPES, LEADERBOARD_CACHE_DIR,
                       LEADERBOARD_CACHE_LOCK, LEADERBOARD_CHANNEL_ID)
-from utils.checks import is_correct_author, is_correct_channel
 from utils.errors import CheckError
 from utils.log import logger
 from pathlib import Path

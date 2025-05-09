@@ -8,6 +8,7 @@ load_dotenv()
 
 DISCORD_API_SECRET = os.getenv("DISCORD_TOKEN")
 VALO_API_KEY = os.getenv("VALO_API_KEY")
+LEADERBOARD_CHANNEL_ID = os.getenv("LEADERBOARD_CHANNEL_ID")
 
 BASE_DIR = pathlib.Path(__file__).parent
 
@@ -41,8 +42,6 @@ LEADERBOARD_TYPES = {
                                                    "Voltaic VAL benchmarks "
                                                    "leaderboard"]
 }
-
-LEADERBOARD_CHANNEL_ID = 1365074551666380800
 
 VERIFIED_USERS = [123229985791016961, 363658627950706698]
 
