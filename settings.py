@@ -8,7 +8,7 @@ load_dotenv()
 
 DISCORD_API_SECRET = os.getenv("DISCORD_TOKEN")
 VALO_API_KEY = os.getenv("VALO_API_KEY")
-LEADERBOARD_CHANNEL_ID = os.getenv("LEADERBOARD_CHANNEL_ID")
+LEADERBOARD_CHANNEL_ID = int(os.getenv("LEADERBOARD_CHANNEL_ID"))
 
 BASE_DIR = pathlib.Path(__file__).parent
 
