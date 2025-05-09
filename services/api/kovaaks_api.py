@@ -136,6 +136,25 @@ async def check_kovaaks_username(username: str):
                                 f"\n\nStatus code: {response.status}. {str(e)}")
 
 
+@kovaaks_api_rate_limiter
+async def get_scenario_id(scenario_name: str):
+    """Queries for scenario details"""
+    try:
+        async with kovaaks_api_session.get(
+            f"https://kovaaks.com/webapp-backend/scenario/popular?"
+            f"page=0&max=1&scenarioNameSearch={scenario_name}"
+        ) as response:
+            response.raise_for_status()
+            headers = response.headers
+            data = await response.json()
+
+            return (data['scenarioId'], headers)
+    except Exception as e:
+        raise ErrorFetchingData(f"Error while fetching scenario data for "
+                                f"scenario name `{scenario_name}`. "
+                                f"\n\nStatus code: {response.status}. {str(e)}")
+
+
 async def setup(bot):
     global kovaaks_api_session
     global update_config
@@ -145,12 +164,14 @@ async def setup(bot):
                             path=S5_VOLTAIC_BENCHMARKS_CONFIG,
                             session=kovaaks_api_session)
     await update_config()
+
+
 async def teardown(bot):
     await close_session()
 
 
-if __name__ == "__main__":
-    import asyncio
-    new_loop = asyncio.new_event_loop()
-    new_loop.run_until_complete(setup(None))
-    new_loop.run_until_complete(get_s5_advance_benchmark_scores("76561198839916720"))
+# if __name__ == "__main__":
+#     import asyncio
+#     new_loop = asyncio.new_event_loop()
+#     new_loop.run_until_complete(setup(None))
+#     new_loop.run_until_complete(get_s5_advance_benchmark_scores("76561198839916720"))

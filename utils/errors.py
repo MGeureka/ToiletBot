@@ -30,6 +30,7 @@ class ErrorFetchingData(WeakError): pass
 class ProfileDoesntExist(WeakError): pass
 class UsernameAlreadyExists(WeakError): pass
 class UsernameDoesNotExist(WeakError): pass
+class ScenarioDoesNotExist(WeakError): pass
 class UnexpectedError(Exception): pass
 class WrongChannel(CheckError): pass
 class UnverifiedUser(CheckError): pass
