@@ -117,8 +117,8 @@ async def check_valorant_username(username: str, tag: str):
                 f"{tag}",
                 headers={"Authorization": f"{VALO_API_KEY}"},
         ) as response:
-            response.raise_for_status()
             headers = response.headers
+            response.raise_for_status()
             data = await response.json()
             return (data['data']['puuid'],
                     data['data']['region']), headers
