@@ -122,33 +122,19 @@ async def check_valorant_username(username: str, tag: str):
             data = await response.json()
             return (data['data']['puuid'],
                     data['data']['region']), headers
-    except aiohttp.client_exceptions.ClientResponseError as e:
-        if response.status == 404:
-            raise ProfileDoesntExist(f"Valorant profile `{username}#{tag}` "
-                                     f"doesn't exist. Or there was an API error",
-                                     headers=headers,
-                                     username=username,
-                                     tag=tag)
     except Exception as e:
-        if response:
-            raise ErrorFetchingData(f"Error while checking "
-                                    f"valorant username `{username}#{tag}`. "
-                                    f"Either the username doesn't exist or "
-                                    f"it's an API error"
-                                    f"\n\nStatus code: "
-                                    f"{data['errors'][0]['status']}. "
-                                    f"Error code: {data['errors'][0]['code']}. "
-                                    f"{data['errors'][0]['message']}",
-                                    headers=headers,
-                                    username=username,
-                                    tag=tag
-                                    )
-        raise ErrorFetchingData(f"Unexpected error while checking "
-                                f"valorant username "
-                                f"`{username}#{tag}`. \n"
-                                f"{str(e)}\n{traceback.format_exc()}",
+        raise ErrorFetchingData(f"Error while checking "
+                                f"valorant username `{username}#{tag}`. "
+                                f"Either the username doesn't exist or "
+                                f"it's an API error"
+                                f"\n\nStatus code: "
+                                f"{data['errors'][0]['status']}. "
+                                f"Error code: {data['errors'][0]['code']}. "
+                                f"{data['errors'][0]['message']}",
+                                headers=headers,
                                 username=username,
-                                tag=tag)
+                                tag=tag
+                                )
 
 
 async def setup(bot):
