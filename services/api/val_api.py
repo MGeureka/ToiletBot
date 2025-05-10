@@ -123,9 +123,9 @@ async def check_valorant_username(username: str, tag: str):
             return (data['data']['puuid'],
                     data['data']['region']), headers
     except aiohttp.client_exceptions.ClientResponseError as e:
-        if response.status == 404 and e.message == "Not Found":
+        if response.status == 404:
             raise ProfileDoesntExist(f"Valorant profile `{username}#{tag}` "
-                                     f"doesn't exist.",
+                                     f"doesn't exist. Or there was an API error",
                                      headers=headers,
                                      username=username,
                                      tag=tag)
