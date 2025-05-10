@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-import asyncio, json
+import asyncio, json, aiofiles
 from utils.database_helper import (get_valorant_profiles, executemany_commit,
                                    get_date_updated, get_datetime,
                                    execute_fetch, get_kovaaks_profiles,
@@ -9,7 +9,9 @@ from services.api.val_api import fetch_rating, fetch_dms
 from services.api.kovaaks_api import (get_s5_novice_benchmark_scores,
                                       get_s5_intermediate_benchmark_scores,
                                       get_s5_advance_benchmark_scores)
-from services.api.aimlabs_api import fetch_s1_val_benchmarks
+from services.api.aimlabs_api import fetch_user_plays
+from settings import S1_VOLTAIC_VAL_BENCHMARKS_CONFIG
+from collections import defaultdict
 
 
 async def update_valorant_rank_leaderboard():
@@ -162,25 +164,64 @@ async def update_voltaic_val_s1_leaderboard():
             date_updated = excluded.date_updated
     """
     aimlabs_profiles = await get_aimlabs_profiles()
+    user_ids = [profile[2] for profile in aimlabs_profiles]
 
-    async def process_profile(profile):
-        now = datetime.now(timezone.utc).isoformat()
-        (discord_id, discord_username, aimlabs_id, aimlabs_username) = profile
-        novice_scores, intermediate_scores, advance_scores = \
-            await fetch_s1_val_benchmarks(aimlabs_id)
-        current_rank, current_rank_id, current_rank_rating = \
-            await calculate_energy(novice_scores,
-                                   intermediate_scores,
-                                   advance_scores,
-                                   "val")
-        return (discord_id, discord_username, aimlabs_id, aimlabs_username,
-                current_rank, current_rank_id, current_rank_rating, now)
+    # Load task configuration
+    async with aiofiles.open(S1_VOLTAIC_VAL_BENCHMARKS_CONFIG) as f:
+        content = await f.read()
+        config = json.loads(content)
 
-    all_values = await asyncio.gather(*[process_profile(profile)
-                                        for profile in aimlabs_profiles])
-    await executemany_commit(sql_statement, all_values,
-                             "voltaic_S5_benchmarks_leaderboard",
-                             "UPSERT")
+    # Extract all task IDs from the configuration
+    all_task_ids = []
+    for category in ['novice_scenarios', 'intermediate_scenarios', 'advanced_scenarios']:
+        all_task_ids.extend([scenario['task_id'] for scenario in config[category]])
+
+    # Fetch scores for all users and tasks in a single batch
+    all_user_scores = await fetch_user_plays(user_ids, all_task_ids)
+
+    all_values = []
+    now = datetime.now(timezone.utc).isoformat()
+    # Process each user's scores
+    for profile in aimlabs_profiles:
+        discord_id, discord_username, aimlabs_id, aimlabs_username = profile
+
+        # Skip if no scores found for this user
+        if aimlabs_id not in all_user_scores:
+            continue
+
+        user_scores = all_user_scores[aimlabs_id]
+
+        # Extract scores for each category in the correct order
+        novice_scores = []
+        for scenario in config['novice_scenarios']:
+            task_id = scenario['task_id']
+            novice_scores.append(user_scores.get(task_id, 0))  # Adding None as a placeholder for headers
+
+        intermediate_scores = []
+        for scenario in config['intermediate_scenarios']:
+            task_id = scenario['task_id']
+            intermediate_scores.append(user_scores.get(task_id, 0))
+
+        advance_scores = []
+        for scenario in config['advanced_scenarios']:
+            task_id = scenario['task_id']
+            advance_scores.append(user_scores.get(task_id, 0))
+        # Calculate rankings
+        current_rank, current_rank_id, current_rank_rating = await calculate_energy(
+            novice_scores, intermediate_scores, advance_scores, "val"
+        )
+
+        # Add to values for batch update
+        all_values.append((
+            discord_id, discord_username, aimlabs_id, aimlabs_username,
+            current_rank, current_rank_id, current_rank_rating, now
+        ))
+    await executemany_commit(
+        sql_statement,
+        all_values,
+        "voltaic_S1_valorant_benchmarks_leaderboard",
+        "UPSERT"
+    )
 
 
 async def get_dm_matches_fromdb():
@@ -261,12 +302,12 @@ async def get_voltaic_s1_val_benchmarks_leaderboard_data():
 
 # if __name__ == "__main__":
 #     import asyncio
-#     from services.api.val_api import setup, teardown
+#     from services.api.aimlabs_api import setup, teardown
 #     new_loop = asyncio.new_event_loop()
 #     new_loop.run_until_complete(setup(None))
-#     data = new_loop.run_until_complete(update_valorant_dm_leaderboard())
+#     data = new_loop.run_until_complete(update_voltaic_val_s1_leaderboard())
 #     new_loop.run_until_complete(teardown(None))
-#     # print(data)
+#     print(data)
 
 async def setup(bot): pass
 async def teardown(bot): pass

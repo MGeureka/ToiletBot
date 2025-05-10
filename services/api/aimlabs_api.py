@@ -34,6 +34,26 @@ query LeaderboardEntry($leaderboardInput: LeaderboardInput!) {
 """
 
 
+GET_USER_PLAYS_AGG = """
+query GetAimlabProfileAgg($where: AimlabPlayWhere!) {
+    aimlab {
+        plays_agg(where: $where) {
+            group_by {
+                task_id
+                task_name
+                user_id
+            }
+            aggregate {
+                max {
+                    score
+                }
+            }
+        }
+    }
+}
+"""
+
+
 # GraphQL Queries
 GET_USER_INFO = """
 query GetProfile($username: String) {
@@ -68,58 +88,45 @@ async def close_session():
 
 
 @aimlabs_api_rate_limiter
-async def fetch_leaderboard_entries(aimlabs_id: str, task_id: str,
-                                    weapon_id: str):
-    try:
-        variables = {
-            "leaderboardInput": {
-                "clientId": "aimlab",
-                "taskId": task_id,
-                "userId": aimlabs_id,
-                "taskMode": 42,
-                "inputDevice": "MOUSE",
-                "source": "cache",
-                "weaponId": weapon_id
-            }
+async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str]):
+    # Prepare variables for the API query
+    variables = {
+        "where": {
+            "is_practice": {"_eq": False},
+            "task_id": {"_in": all_task_ids},
+            "user_id": {"_in": user_ids},
+            "task_mode": {"_eq": 42},
         }
+    }
+    try:
         async with aimlabs_api_session.post(
-            url=API_ENDPOINT,
-            json={"query": GET_LEADERBOARD_INPUT, "variables": variables},
+                url=API_ENDPOINT,
+                headers={"Content-Type": "application/json"},
+                json={"query": GET_USER_PLAYS_AGG, "variables": variables}
         ) as response:
-            headers = response.headers
             response.raise_for_status()
+            headers = response.headers
             data = await response.json()
-            if not data['data']['aimlab']['leaderboard']['leaderboardEntries']:
-                return 0, headers
-            if data['data']['aimlab']['leaderboard']['leaderboardEntries']\
-                [0]['play']['gridshieldStatus'] == "APPROVED":
-                return (data['data']['aimlab']['leaderboard']\
-                            ['leaderboardEntries'][0]['data']['score'],
-                        headers)
-            return 0, headers
+            # Process the response
+            if not data.get('data', {}).get('aimlab', {}).get('plays_agg'):
+                return {}, headers
+
+            # Create a dictionary to store scores: {user_id: {task_id: score}}
+            user_scores = {}
+            for entry in data['data']['aimlab']['plays_agg']:
+                user_id = entry['group_by']['user_id']
+                task_id = entry['group_by']['task_id']
+                score = entry['aggregate']['max']['score']
+
+                if user_id not in user_scores:
+                    user_scores[user_id] = {}
+
+                user_scores[user_id][task_id] = score
+            return user_scores, headers
     except Exception as e:
-        raise ErrorFetchingData(f"Error fetching task stats from Aimlabs API"
-                                f"\n{str(e)}")
-
-
-async def fetch_s1_val_benchmarks(aimlabs_id: str):
-    await update_config()
-    async with aiofiles.open(S1_VOLTAIC_VAL_BENCHMARKS_CONFIG) as f:
-        content = await f.read()
-        config = json.loads(content)
-    async def process_scenario(scenario):
-        score = await fetch_leaderboard_entries(
-            aimlabs_id=aimlabs_id,
-            task_id=scenario['task_id'],
-            weapon_id=scenario['weapon_id']
-        )
-        return score
-    novice, intermediate, advanced = await asyncio.gather(
-        asyncio.gather(*[process_scenario(scenario) for scenario in config['novice_scenarios']]),
-        asyncio.gather(*[process_scenario(scenario) for scenario in config['intermediate_scenarios']]),
-        asyncio.gather(*[process_scenario(scenario) for scenario in config['advanced_scenarios']]),
-    )
-    return novice, intermediate, advanced
+        raise ErrorFetchingData(f"API returned status "
+                                f"`{response.status}` Reason: {e.reason}",
+                                headers=headers)
 
 
 @aimlabs_api_rate_limiter
@@ -127,9 +134,10 @@ async def check_aimlabs_username(username:str):
     """Queries aimlabs api and checks if username exists."""
     try:
         async with aimlabs_api_session.post(
-        url=API_ENDPOINT,
-        headers={"Content-Type": "application/json"},
-        json={"query": GET_USER_INFO, "variables": {"username": username}}
+                url=API_ENDPOINT,
+                headers={"Content-Type": "application/json"},
+                json={"query": GET_USER_INFO, "variables":
+                    {"username": username}}
         ) as response:
             headers = response.headers
             response.raise_for_status()
