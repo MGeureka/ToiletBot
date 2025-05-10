@@ -91,7 +91,7 @@ async def fetch_rating(puuid: str, region: str):
     except UnableToDecodeJson as e:
         raise ErrorFetchingData(f"Unable to decode Valorant API "
                                 f"response.\n"
-                                f"{str(e)}\n{traceback.format_exc()}",
+                                f"{str(e)}",
                                 headers=headers)
     except Exception as e:
         if response:
@@ -122,16 +122,15 @@ async def check_valorant_username(username: str, tag: str):
             data = await response.json()
             return (data['data']['puuid'],
                     data['data']['region']), headers
+    except aiohttp.client_exceptions.ClientResponseError as e:
+        if response.status == 404 and e.message == "Not Found":
+            raise ProfileDoesntExist(f"Valorant profile `{username}#{tag}` "
+                                     f"doesn't exist.",
+                                     headers=headers,
+                                     username=username,
+                                     tag=tag)
     except Exception as e:
         if response:
-            headers = response.headers
-            data = await response.json()
-            if data["errors"][0]['code'] == 22:
-                raise ProfileDoesntExist(f"Valorant profile `{username}#{tag}` "
-                                         f"doesn't exist.",
-                                         headers=headers,
-                                         username=username,
-                                         tag=tag)
             raise ErrorFetchingData(f"Error while checking "
                                     f"valorant username `{username}#{tag}`. "
                                     f"Either the username doesn't exist or "
