@@ -123,6 +123,7 @@ class LeaderboardRenderer:
         elif icon_type == "voltaic":
             masked_rank_id = Image.open(VOLTAIC_RANK_IMAGES_DIR /
                                         f"{rank_id}.png")
+            masked_rank_id = masked_rank_id.convert("RGBA")
         elif icon_type == "voltaic_val":
             masked_rank_id = Image.open(VOLTAIC_VAL_RANK_IMAGES_DIR /
                                         f"{rank_id}.png")
