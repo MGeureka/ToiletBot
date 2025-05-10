@@ -126,11 +126,7 @@ async def check_valorant_username(username: str, tag: str):
         raise ErrorFetchingData(f"Error while checking "
                                 f"valorant username `{username}#{tag}`. "
                                 f"Either the username doesn't exist or "
-                                f"it's an API error"
-                                f"\n\nStatus code: "
-                                f"{data['errors'][0]['status']}. "
-                                f"Error code: {data['errors'][0]['code']}. "
-                                f"{data['errors'][0]['message']}",
+                                f"it's an API error",
                                 headers=headers,
                                 username=username,
                                 tag=tag
