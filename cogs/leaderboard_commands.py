@@ -79,7 +79,6 @@ class LeaderboardView(View):
 
 
     async def update_leaderboard_message(self):
-        # await self.bot.wait_until_ready()
         try:
             async with LEADERBOARD_CACHE_LOCK:
                 filename = f"{self.current_page}.jpeg"

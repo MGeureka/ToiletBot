@@ -50,7 +50,8 @@ all_extensions = [
     'cogs.kovaaks_commands',
     'cogs.help_commands',
     'cogs.database_commands',
-    'cogs.leaderboard_commands'
+    'cogs.leaderboard_commands',
+    # 'cogs.rotating_leaderboard_commands'
     # Add other cogs here as you create them
 ]
 

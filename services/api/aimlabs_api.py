@@ -6,12 +6,13 @@ from typing import Any
 from services.api.kovaaks_api import update_benchmark_scenario_list
 from settings import S1_VOLTAIC_VAL_BENCHMARKS_CONFIG
 from utils.errors import ErrorFetchingData, ProfileDoesntExist
-from utils.api_helper import AsyncRateLimiter
+from utils.api_helper import AsyncRateLimiter, UpdatedAsyncRateLimiter
 from utils.log import logger, api_logger
 
 # API Endpoint
 API_ENDPOINT = "https://api.aimlab.gg/graphql"
-aimlabs_api_rate_limiter = AsyncRateLimiter("aimlabs")
+# aimlabs_api_rate_limiter = AsyncRateLimiter("aimlabs")
+aimlabs_api_rate_limiter = UpdatedAsyncRateLimiter("aimlabs")
 
 SCENARIO_LIST_URL = \
     "https://beta.voltaic.gg/api/v1/aimlabs/benchmarks/valorant_s1"
@@ -104,8 +105,8 @@ async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str]):
                 headers={"Content-Type": "application/json"},
                 json={"query": GET_USER_PLAYS_AGG, "variables": variables}
         ) as response:
-            response.raise_for_status()
             headers = response.headers
+            response.raise_for_status()
             data = await response.json()
             # Process the response
             if not data.get('data', {}).get('aimlab', {}).get('plays_agg'):

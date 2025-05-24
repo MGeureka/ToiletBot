@@ -4,14 +4,15 @@ from typing import Any
 
 from utils.api_helper import update_benchmark_scenario_list
 from utils.errors import (ErrorFetchingData, ProfileDoesntExist)
-from utils.api_helper import AsyncRateLimiter
+from utils.api_helper import AsyncRateLimiter, UpdatedAsyncRateLimiter
 from utils.log import logger, api_logger
 from settings import S5_VOLTAIC_BENCHMARKS_CONFIG
 
 SCENARIO_LIST_URL = \
     "https://beta.voltaic.gg/api/v1/kovaaks/benchmarks/kovaaks_s5"
 
-kovaaks_api_rate_limiter = AsyncRateLimiter("kovaaks")
+# kovaaks_api_rate_limiter = AsyncRateLimiter("kovaaks")
+kovaaks_api_rate_limiter = UpdatedAsyncRateLimiter("kovaaks")
 kovaaks_api_session: aiohttp.ClientSession | None = None
 update_config: Any = None
 

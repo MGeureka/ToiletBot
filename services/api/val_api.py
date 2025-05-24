@@ -4,10 +4,11 @@ import traceback
 from utils.errors import (ErrorFetchingData, ProfileDoesntExist,
                           UnableToDecodeJson)
 from settings import VALO_API_KEY
-from utils.api_helper import AsyncRateLimiter, get_json
+from utils.api_helper import AsyncRateLimiter, get_json, UpdatedAsyncRateLimiter
 from utils.log import logger, api_logger
 
-val_api_rate_limiter = AsyncRateLimiter("val")
+# val_api_rate_limiter = AsyncRateLimiter("val")
+val_api_rate_limiter = UpdatedAsyncRateLimiter("val")
 val_api_session: aiohttp.ClientSession | None = None
 
 PLATFORM = "pc"
