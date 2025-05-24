@@ -6,7 +6,7 @@ from functools import wraps
 import aiohttp
 
 from settings import API_HEADER_FIELDS
-from utils.log import api_logger
+from utils.log import api_logger, logger
 from utils.errors import ErrorFetchingData, UnableToDecodeJson
 import json
 from collections import deque
@@ -215,8 +215,6 @@ class UpdatedAsyncRateLimiter:
 
             if remaining is not None:
                 remaining = int(remaining)
-                api_logger.info(f"Called {self.api_type}.{func.__name__} ({runtime:.2f}s): "
-                                f"{remaining} calls remaining")
 
                 # If server reports very low remaining calls, add extra buffer
                 if remaining <= 3:
@@ -224,9 +222,10 @@ class UpdatedAsyncRateLimiter:
                     # Add some artificial delay to be extra safe
                     await asyncio.sleep(0.5)
 
-            if reset_time is not None:
+            if remaining is not None and reset_time is not None:
                 reset_seconds = float(reset_time)
-                api_logger.info(f"Rate limit resets in {reset_seconds}s for {self.api_type}")
+                api_logger.info(f"Called {self.api_type}.{func.__name__} ({runtime:.2f}s): "
+                                f"{remaining} calls remaining, reset time is {reset_seconds}")
 
         except (ValueError, TypeError) as e:
             api_logger.error(f"Failed to parse rate limit headers for {self.api_type}: {e}")

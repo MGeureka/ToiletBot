@@ -12,9 +12,12 @@ from services.api.kovaaks_api import (get_s5_novice_benchmark_scores,
 from services.api.aimlabs_api import fetch_user_plays
 from settings import S1_VOLTAIC_VAL_BENCHMARKS_CONFIG
 from collections import defaultdict
+from utils.log import logger
+import time
 
 
 async def update_valorant_rank_leaderboard():
+    start_time = time.time()
     sql_statement = """
         INSERT INTO valorant_rank_leaderboard (
             discord_id, discord_username, valorant_id, 
@@ -48,9 +51,13 @@ async def update_valorant_rank_leaderboard():
     await executemany_commit(sql_statement, all_values,
                              "valorant_rank_leaderboard",
                              "UPSERT")
+    end_time = time.time()
+    runtime = start_time - end_time
+    logger.info(f"Done updating valorant ranked leaderboard in {runtime:.2f}s")
 
 
 async def update_valorant_dm_leaderboard():
+    start_time = time.time()
     sql_statement = """
         INSERT INTO valorant_dm_leaderboard (
             discord_id, discord_username, valorant_id, 
@@ -106,9 +113,13 @@ async def update_valorant_dm_leaderboard():
     await executemany_commit(sql_statement, all_values,
                              "valorant_dm_leaderboard",
                              "UPSERT")
+    end_time = time.time()
+    runtime = start_time - end_time
+    logger.info(f"Done updating valorant dm leaderboard in {runtime:.2f}s")
 
 
 async def update_voltaic_s5_leaderboard():
+    start_time = time.time()
     sql_statement = """
         INSERT INTO voltaic_S5_benchmarks_leaderboard (
             discord_id, discord_username, kovaaks_id, kovaaks_username, 
@@ -148,9 +159,13 @@ async def update_voltaic_s5_leaderboard():
     await executemany_commit(sql_statement, all_values,
                              "voltaic_S5_benchmarks_leaderboard",
                              "UPSERT")
+    end_time = time.time()
+    runtime = start_time - end_time
+    logger.info(f"Done updating voltaic S5 leaderboard in {runtime:.2f}s")
 
 
 async def update_voltaic_val_s1_leaderboard():
+    start_time = time.time()
     sql_statement = """
         INSERT INTO voltaic_S1_valorant_benchmarks_leaderboard (
             discord_id, discord_username, aimlabs_id, aimlabs_username, 
@@ -222,6 +237,9 @@ async def update_voltaic_val_s1_leaderboard():
         "voltaic_S1_valorant_benchmarks_leaderboard",
         "UPSERT"
     )
+    end_time = time.time()
+    runtime = start_time - end_time
+    logger.info(f"Done updating voltaic val S1 leaderboard in {runtime:.2f}s")
 
 
 async def get_dm_matches_fromdb():
