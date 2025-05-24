@@ -9,6 +9,7 @@ from settings import API_HEADER_FIELDS
 from utils.log import api_logger
 from utils.errors import ErrorFetchingData, UnableToDecodeJson
 import json
+from collections import deque
 FILE_LOCK = asyncio.Lock()
 
 
