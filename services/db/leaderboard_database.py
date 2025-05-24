@@ -52,7 +52,7 @@ async def update_valorant_rank_leaderboard():
                              "valorant_rank_leaderboard",
                              "UPSERT")
     end_time = time.time()
-    runtime = start_time - end_time
+    runtime = end_time - start_time
     logger.info(f"Done updating valorant ranked leaderboard in {runtime:.2f}s")
 
 
@@ -114,7 +114,7 @@ async def update_valorant_dm_leaderboard():
                              "valorant_dm_leaderboard",
                              "UPSERT")
     end_time = time.time()
-    runtime = start_time - end_time
+    runtime = end_time - start_time
     logger.info(f"Done updating valorant dm leaderboard in {runtime:.2f}s")
 
 
@@ -160,7 +160,7 @@ async def update_voltaic_s5_leaderboard():
                              "voltaic_S5_benchmarks_leaderboard",
                              "UPSERT")
     end_time = time.time()
-    runtime = start_time - end_time
+    runtime = end_time - start_time
     logger.info(f"Done updating voltaic S5 leaderboard in {runtime:.2f}s")
 
 
@@ -238,7 +238,7 @@ async def update_voltaic_val_s1_leaderboard():
         "UPSERT"
     )
     end_time = time.time()
-    runtime = start_time - end_time
+    runtime = end_time - start_time
     logger.info(f"Done updating voltaic val S1 leaderboard in {runtime:.2f}s")
 
 
