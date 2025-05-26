@@ -100,7 +100,7 @@ async def update_valorant_username_indb(valorant_username: str,
                                    f"in the database. Add it using "
                                    f"`/add_valorant_profile`")
     sql_statement = f"""
-    UPDATE aimlabs_profiles SET
+    UPDATE valorant_profiles SET
     valorant_username = ?,
     valorant_tag = ?,
     valorant_id = ?,
