@@ -37,8 +37,13 @@ async def update_valorant_rank_leaderboard():
     async def process_profile(profile):
         (discord_id, discord_username, valorant_id, valorant_username,
          valorant_tag, region) = profile
-
-        ratings = await fetch_rating(valorant_id, region)
+        try:
+            ratings = await fetch_rating(valorant_id, region)
+        except Exception as e:
+            logger.error(f"Error fetching val ratings for: {discord_username} "
+                         f"({discord_id}) - {valorant_username}#{valorant_tag} "
+                         f"\n{str(e)}")
+            ratings = (0, 0, 0, 0, 0)
         (current_rank, current_rank_id, current_rr, peak_rank,
          peak_rank_id) = ratings
 

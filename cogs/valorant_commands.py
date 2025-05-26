@@ -140,7 +140,7 @@ class ValorantCommands(commands.Cog):
             logger.info(f"{user_nick} ({user_id}) ran "
                         f"/update_valorant_profile successfully")
             await interaction.followup.send(f"Successfully updated "
-                                            f"your profile in the database"
+                                            f"your profile in the database "
                                             f"to `{username}#{tag}`.")
         except WeakError as e:
             logger.warning(f"{user_nick} ({user_id}) ran "
