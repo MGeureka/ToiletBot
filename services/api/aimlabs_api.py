@@ -126,7 +126,7 @@ async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str]):
             return user_scores, headers
     except Exception as e:
         raise ErrorFetchingData(f"API returned status "
-                                f"`{response.status}` Reason: {e.reason}",
+                                f"`{response.status}` Reason: {str(e)}",
                                 headers=headers)
 
 
@@ -153,7 +153,7 @@ async def check_aimlabs_username(username:str):
 
     except aiohttp.ClientResponseError as e:
         raise ErrorFetchingData(f"API returned status "
-                                f"`{response.status}` Reason: {e.reason}",
+                                f"`{response.status}` Reason: {str(e)}",
                                 headers=headers,
                                 username=username)
     except aiohttp.ClientError as e:
