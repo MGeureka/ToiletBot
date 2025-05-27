@@ -52,22 +52,10 @@ class SelectAimTrainer(discord.ui.Select):
             await interaction.response.send_modal(CreateKovaaksLeaderboardModal())
 
 
-class ScenarioSearchButton(discord.ui.Button):
-    def __init__(self, view) -> None:
-        self.view = view
-        super().__init__(label="Search for scenario",
-                         style=discord.ButtonStyle.success)
-
-
-    async def callback(self, interaction: discord.Interaction):
-        pass
-
-
 class CreateLeaderboardView(discord.ui.View):
     def __init__(self) -> None:
         super().__init__()
         self.add_item(SelectAimTrainer(self))
-        self.add_item(ScenarioSearchButton(self))
 
 
 class RotatingLeaderboardsCommands(commands.Cog):

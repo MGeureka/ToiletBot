@@ -144,12 +144,18 @@ async def update_voltaic_s5_leaderboard():
         now = datetime.now(timezone.utc).isoformat()
         (discord_id, discord_username, kovaaks_id, kovaaks_username,
          steam_id, steam_username) = profile
-        novice_scores, intermediate_scores, advance_scores = \
-            await asyncio.gather(
-                get_s5_novice_benchmark_scores(steam_id),
-                get_s5_intermediate_benchmark_scores(steam_id),
-                get_s5_advance_benchmark_scores(steam_id)
-            )
+        try:
+            novice_scores, intermediate_scores, advance_scores = \
+                await asyncio.gather(
+                    get_s5_novice_benchmark_scores(steam_id),
+                    get_s5_intermediate_benchmark_scores(steam_id),
+                    get_s5_advance_benchmark_scores(steam_id)
+                )
+        except Exception as e:
+            logger.error(f"Failed to fetch kovaaks scores for user "
+                         f"{discord_username} ({discord_id}): "
+                         f"\n{str(e)}")
+            return None
         current_rank, current_rank_id, current_rank_rating = \
             await calculate_energy(novice_scores,
                                    intermediate_scores,
@@ -161,9 +167,13 @@ async def update_voltaic_s5_leaderboard():
 
     all_values = await asyncio.gather(*[process_profile(profile)
                                         for profile in kovaaks_profiles])
-    await executemany_commit(sql_statement, all_values,
-                             "voltaic_S5_benchmarks_leaderboard",
-                             "UPSERT")
+    all_values = [value for value in all_values if value is not None]
+    if all_values:
+        await executemany_commit(sql_statement, all_values,
+                                 "voltaic_S5_benchmarks_leaderboard",
+                                 "UPSERT")
+    else:
+        logger.warning(f"No valid values to update voltaic leaderboard")
     end_time = time.time()
     runtime = end_time - start_time
     logger.info(f"Done updating voltaic S5 leaderboard in {runtime:.2f}s")
