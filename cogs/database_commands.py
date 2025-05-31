@@ -350,8 +350,11 @@ class DatabaseCommands(commands.Cog):
             try:
                 user = self.bot.get_user(user_id)
                 if user is None:
+                    logger.error(f"Failed to get user {user_id}")
                     return
+                user_nick = user.display_name
                 asset = user.display_avatar or user.default_avatar
+                await update_discord_profile(user_nick, user_id)
                 avatar_bytes = await asset.read()
                 avatar = Image.open(BytesIO(avatar_bytes))
                 avatar = avatar.resize((100, 100))
