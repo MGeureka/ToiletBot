@@ -352,7 +352,7 @@ class DatabaseCommands(commands.Cog):
                 if user is None:
                     logger.error(f"Failed to get user {user_id}")
                     return
-                user_nick = user.display_name
+                user_nick = user.nick or user.display_name
                 asset = user.display_avatar or user.default_avatar
                 await update_discord_profile(user_nick, user_id)
                 avatar_bytes = await asset.read()
