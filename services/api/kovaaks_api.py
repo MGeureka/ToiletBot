@@ -149,7 +149,7 @@ async def get_scenario_id(scenario_name: str):
             headers = response.headers
             data = await response.json()
 
-            return (data['scenarioId'], headers)
+            return data['scenarioId'], headers
     except Exception as e:
         raise ErrorFetchingData(f"Error while fetching scenario data for "
                                 f"scenario name `{scenario_name}`. "

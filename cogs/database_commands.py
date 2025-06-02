@@ -344,9 +344,9 @@ class DatabaseCommands(commands.Cog):
         async def process_avatar(user_id):
             now = datetime.now(timezone.utc).timestamp()
             path = AVATAR_CACHE_DIR / f"{user_id}.jpeg"
-            if os.path.exists(path):
-                if now - os.path.getmtime(path) < 86400:
-                    return
+            # if os.path.exists(path):
+            #     if now - os.path.getmtime(path) < 86400:
+            #         return
             try:
                 user = self.bot.get_user(user_id)
                 if user is None:
