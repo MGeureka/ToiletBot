@@ -342,7 +342,7 @@ class DatabaseCommands(commands.Cog):
     async def regenerate_discord_user_avatar(self):
         data = await self.get_data("discord_profiles")
         guild = self.bot.get_guild(GUILD_ID)
-        async def process_avatar(user_id):
+        async def process_avatar(user_id, discord_username):
             now = datetime.now(timezone.utc).timestamp()
             path = AVATAR_CACHE_DIR / f"{user_id}.jpeg"
             if os.path.exists(path):
@@ -351,7 +351,8 @@ class DatabaseCommands(commands.Cog):
             try:
                 user = guild.get_member(user_id) or await guild.fetch_member(user_id)
                 if user is None:
-                    logger.error(f"Failed to get user {user_id}")
+                    logger.error(f"Failed to get user "
+                                 f"{discord_username} ({user_id})")
                     return
                 user_nick = user.nick or user.display_name
                 asset = user.display_avatar or user.default_avatar
@@ -363,12 +364,13 @@ class DatabaseCommands(commands.Cog):
                 with AVATAR_CACHE_LOCK:
                     avatar.save(path)
             except Exception as e:
-                logger.error(f"Error updating avatar/username for {user_id}: "
+                logger.error(f"Error updating avatar/username for "
+                             f"{discord_username} ({user_id}): "
                              f"{str(e)}")
                 return
 
 
-        await asyncio.gather(*[process_avatar(profile[0]) for profile in data])
+        await asyncio.gather(*[process_avatar(profile[0], profile[1]) for profile in data])
 
 
     async def regenerate_discord_leaderboard_images(self,
