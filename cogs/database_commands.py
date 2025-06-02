@@ -30,7 +30,7 @@ from utils.image_gen import LeaderboardRenderer, delete_files_indir
 import traceback
 from utils.checks import is_correct_channel, is_correct_author
 from settings import (LEADERBOARD_TYPES, AVATAR_CACHE_DIR, LEADERBOARD_CACHE_DIR,
-                      LEADERBOARD_CACHE_LOCK, AVATAR_CACHE_LOCK)
+                      LEADERBOARD_CACHE_LOCK, AVATAR_CACHE_LOCK, GUILD_ID)
 from configs.leaderboard_config import leaderboard_types_list
 
 LEADERBOARD_UPDATE_METHODS = {
@@ -341,6 +341,7 @@ class DatabaseCommands(commands.Cog):
 
     async def regenerate_discord_user_avatar(self):
         data = await self.get_data("discord_profiles")
+        guild = self.bot.get_guild(GUILD_ID)
         async def process_avatar(user_id):
             now = datetime.now(timezone.utc).timestamp()
             path = AVATAR_CACHE_DIR / f"{user_id}.jpeg"
@@ -348,7 +349,7 @@ class DatabaseCommands(commands.Cog):
             #     if now - os.path.getmtime(path) < 86400:
             #         return
             try:
-                user = self.bot.get_user(user_id)
+                user = guild.get_member(user_id) or await guild.fetch_member(user_id)
                 if user is None:
                     logger.error(f"Failed to get user {user_id}")
                     return
@@ -362,8 +363,9 @@ class DatabaseCommands(commands.Cog):
                 with AVATAR_CACHE_LOCK:
                     avatar.save(path)
             except Exception as e:
-                logger.error(f"Error updating avatar for {user_id}: "
+                logger.error(f"Error updating avatar/username for {user_id}: "
                              f"{str(e)}\n{traceback.format_exc()}")
+                return
 
 
         await asyncio.gather(*[process_avatar(profile[0]) for profile in data])
