@@ -345,9 +345,9 @@ class DatabaseCommands(commands.Cog):
         async def process_avatar(user_id):
             now = datetime.now(timezone.utc).timestamp()
             path = AVATAR_CACHE_DIR / f"{user_id}.jpeg"
-            # if os.path.exists(path):
-            #     if now - os.path.getmtime(path) < 86400:
-            #         return
+            if os.path.exists(path):
+                if now - os.path.getmtime(path) < 86400:
+                    return
             try:
                 user = guild.get_member(user_id) or await guild.fetch_member(user_id)
                 if user is None:
@@ -364,7 +364,7 @@ class DatabaseCommands(commands.Cog):
                     avatar.save(path)
             except Exception as e:
                 logger.error(f"Error updating avatar/username for {user_id}: "
-                             f"{str(e)}\n{traceback.format_exc()}")
+                             f"{str(e)}")
                 return
 
 
