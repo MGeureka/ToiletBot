@@ -1,3 +1,5 @@
+from asyncio import timeout
+
 from settings import DB_PATH
 import aiosqlite
 import uuid, aiofiles, json
@@ -21,37 +23,37 @@ def get_datetime(datetime_str: str):
 async def execute_commit(query: str, values: tuple, table_name: str,
                          operation: str) -> None:
     transaction_id = str(uuid.uuid4())
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(DB_PATH, timeout=10.0) as db:
         await db.execute("PRAGMA foreign_keys = ON;")
         try:
             async with db.execute(query, values) as cur:
                 affected_rows = cur.rowcount if hasattr(cur, 'rowcount') else 0
                 await db.commit()
-                await log_transaction(
-                    db=db,
-                    transaction_id=transaction_id,
-                    operation=operation,
-                    table_name=table_name,
-                    query=query,
-                    parameters=values,
-                    status="SUCCESS",
-                    error_message=None,
-                    affected_rows=affected_rows
-                )
+                # await log_transaction(
+                #     db=db,
+                #     transaction_id=transaction_id,
+                #     operation=operation,
+                #     table_name=table_name,
+                #     query=query,
+                #     parameters=values,
+                #     status="SUCCESS",
+                #     error_message=None,
+                #     affected_rows=affected_rows
+                # )
 
         except Exception as e:
             await db.rollback()
-            await log_transaction(
-                db=db,
-                transaction_id=transaction_id,
-                operation=operation,
-                table_name=table_name,
-                query=query,
-                parameters=values,
-                status="ERROR",
-                error_message=str(e),
-                affected_rows=0
-            )
+            # await log_transaction(
+            #     db=db,
+            #     transaction_id=transaction_id,
+            #     operation=operation,
+            #     table_name=table_name,
+            #     query=query,
+            #     parameters=values,
+            #     status="ERROR",
+            #     error_message=str(e),
+            #     affected_rows=0
+            # )
 
             raise e
 
@@ -59,37 +61,37 @@ async def execute_commit(query: str, values: tuple, table_name: str,
 async def executemany_commit(query: str, values: list[tuple], table_name: str,
                          operation: str) -> None:
     transaction_id = str(uuid.uuid4())
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(DB_PATH, timeout=10) as db:
         await db.execute("PRAGMA foreign_keys = ON;")
         try:
             async with db.executemany(query, values) as cur:
                 affected_rows = cur.rowcount if hasattr(cur, 'rowcount') else 0
                 await db.commit()
-                await log_transaction(
-                    db=db,
-                    transaction_id=transaction_id,
-                    operation=operation,
-                    table_name=table_name,
-                    query=query,
-                    parameters=values,
-                    status="SUCCESS",
-                    error_message=None,
-                    affected_rows=affected_rows
-                )
+                # await log_transaction(
+                #     db=db,
+                #     transaction_id=transaction_id,
+                #     operation=operation,
+                #     table_name=table_name,
+                #     query=query,
+                #     parameters=values,
+                #     status="SUCCESS",
+                #     error_message=None,
+                #     affected_rows=affected_rows
+                # )
 
         except Exception as e:
             await db.rollback()
-            await log_transaction(
-                db=db,
-                transaction_id=transaction_id,
-                operation=operation,
-                table_name=table_name,
-                query=query,
-                parameters=values,
-                status="ERROR",
-                error_message=str(e),
-                affected_rows=0
-            )
+            # await log_transaction(
+            #     db=db,
+            #     transaction_id=transaction_id,
+            #     operation=operation,
+            #     table_name=table_name,
+            #     query=query,
+            #     parameters=values,
+            #     status="ERROR",
+            #     error_message=str(e),
+            #     affected_rows=0
+            # )
 
             raise e
 
@@ -102,30 +104,30 @@ async def execute_fetch(query: str, values: tuple, table_name: str) -> list:
             async with db.execute(query, values) as cur:
                 results = await cur.fetchall()
 
-                await log_transaction(
-                    db=db,
-                    transaction_id=transaction_id,
-                    operation="SELECT",
-                    table_name=table_name,
-                    query=query,
-                    parameters=values,
-                    status="SUCCESS",
-                    error_message=None,
-                    affected_rows=len(results)
-                )
+                # await log_transaction(
+                #     db=db,
+                #     transaction_id=transaction_id,
+                #     operation="SELECT",
+                #     table_name=table_name,
+                #     query=query,
+                #     parameters=values,
+                #     status="SUCCESS",
+                #     error_message=None,
+                #     affected_rows=len(results)
+                # )
                 return results
         except Exception as e:
-            await log_transaction(
-                db=db,
-                transaction_id=transaction_id,
-                operation="SELECT",
-                table_name=table_name,
-                query=query,
-                parameters=values,
-                status="ERROR",
-                error_message=str(e),
-                affected_rows=0
-            )
+            # await log_transaction(
+            #     db=db,
+            #     transaction_id=transaction_id,
+            #     operation="SELECT",
+            #     table_name=table_name,
+            #     query=query,
+            #     parameters=values,
+            #     status="ERROR",
+            #     error_message=str(e),
+            #     affected_rows=0
+            # )
             raise e
 
 
