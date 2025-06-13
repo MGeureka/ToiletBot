@@ -266,5 +266,5 @@ async def setup(bot): pass
 async def teardown(bot): pass
 
 
-# if __name__ == '__main__':
-#     _get_templates("dojo_aimlabs_playlist_advanced")
+if __name__ == '__main__':
+    _get_templates("dojo_aimlabs_playlist_balanced")

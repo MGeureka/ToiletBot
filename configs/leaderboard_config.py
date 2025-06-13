@@ -107,7 +107,7 @@ LEADERBOARD_RENDER_CONFIG = {
         data_parser = voltaic_s5_benchmark_leaderboard_parser
     ),
     leaderboard_types_list[4]: LeaderboardRendererConfig(
-        title = "Balance Dojo Playlist (Aimlabs)",
+        title = "Balanced Dojo Playlist (Aimlabs)",
         headers = ["#", "User", "Score"],
         header_positions = [40, 270, 1620],
         score_position = 1710,
