@@ -343,11 +343,11 @@ def calculate_dojo_playlist_score(scores, all_task_ids, max_min_scores):
         max_score = max_min_scores[task_id]['max']
         min_score = max_min_scores[task_id]['min']
         if max_score == min_score:
-            energy = 100
+            energy = 1000
         else:
             raw = (score - min_score) / (max_score - min_score)
             normalized = max(0, min(raw, 1))
-            energy = (normalized ** 2) * 100
+            energy = (normalized ** 2) * 1000
         # print(score, task_id, energy, max_score, min_score)
         energies.append(energy)
     epsilon = 1e-6
