@@ -111,6 +111,7 @@ LEADERBOARD_RENDER_CONFIG = {
         headers = ["#", "User", "Score"],
         header_positions = [40, 270, 1620],
         score_position = 1710,
+        draw_second_username = True,
         data_parser = dojo_aimlabs_playlist_renderer
     ),
     leaderboard_types_list[5]: LeaderboardRendererConfig(
@@ -118,6 +119,7 @@ LEADERBOARD_RENDER_CONFIG = {
         headers = ["#", "User", "Score"],
         header_positions = [40, 270, 1620],
         score_position = 1710,
+        draw_second_username = True,
         data_parser = dojo_aimlabs_playlist_renderer
     )
 }
