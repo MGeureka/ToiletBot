@@ -55,7 +55,17 @@ def voltaic_s5_benchmark_leaderboard_parser(row):
         username=username,
         score_display=score_display,
         rank_id=rank_id,
-        second_username = second_username,
+        second_username=second_username,
+    )
+
+
+def dojo_aimlabs_playlist_renderer(row):
+    user_id, username, score, second_username = row
+    return LeaderboardRenderRow(
+        user_id=user_id,
+        username=username,
+        score_display=str(score),
+        second_username=second_username,
     )
 
 
@@ -95,6 +105,20 @@ LEADERBOARD_RENDER_CONFIG = {
         draw_voltaic_val_rank_icon =  True,
         draw_second_username = True,
         data_parser = voltaic_s5_benchmark_leaderboard_parser
+    ),
+    leaderboard_types_list[4]: LeaderboardRendererConfig(
+        title = "Balance Dojo Playlist (Aimlabs)",
+        headers = ["#", "User", "Score"],
+        header_positions = [40, 270, 1620],
+        score_position = 1710,
+        data_parser = dojo_aimlabs_playlist_renderer
+    ),
+    leaderboard_types_list[5]: LeaderboardRendererConfig(
+        title = "Advanced Dojo Playlist (Aimlabs)",
+        headers = ["#", "User", "Score"],
+        header_positions = [40, 270, 1620],
+        score_position = 1710,
+        data_parser = dojo_aimlabs_playlist_renderer
     )
 }
 

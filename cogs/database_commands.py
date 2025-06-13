@@ -19,10 +19,14 @@ from services.db.leaderboard_database import (
     update_valorant_dm_leaderboard,
     update_voltaic_s5_leaderboard,
     update_voltaic_val_s1_leaderboard,
+    update_dojo_aimlabs_balanced_playlist_leaderboard,
+    update_dojo_aimlabs_advanced_playlist_leaderboard,
     get_valorant_rank_leaderboard_data,
     get_valorant_dm_leaderboard_data,
     get_voltaic_s5_benchmarks_leaderboard_data,
-    get_voltaic_s1_val_benchmarks_leaderboard_data
+    get_voltaic_s1_val_benchmarks_leaderboard_data,
+    get_dojo_aimlabs_playlist_balanced_leaderboard_data,
+    get_dojo_aimlabs_playlist_advanced_leaderboard_data
 )
 from utils.database_helper import get_profiles_from_db, get_discord_profiles
 from utils.errors import CheckError
@@ -38,13 +42,17 @@ LEADERBOARD_UPDATE_METHODS = {
     leaderboard_types_list[1]: update_valorant_dm_leaderboard,
     leaderboard_types_list[2]: update_voltaic_s5_leaderboard,
     leaderboard_types_list[3]: update_voltaic_val_s1_leaderboard,
+    leaderboard_types_list[4]: update_dojo_aimlabs_balanced_playlist_leaderboard,
+    leaderboard_types_list[5]: update_dojo_aimlabs_advanced_playlist_leaderboard
 }
 
 LEADERBOARD_RENDERER = {
     leaderboard_types_list[0]: LeaderboardRenderer(leaderboard_types_list[0]),
     leaderboard_types_list[1]: LeaderboardRenderer(leaderboard_types_list[1]),
     leaderboard_types_list[2]: LeaderboardRenderer(leaderboard_types_list[2]),
-    leaderboard_types_list[3]: LeaderboardRenderer(leaderboard_types_list[3])
+    leaderboard_types_list[3]: LeaderboardRenderer(leaderboard_types_list[3]),
+    leaderboard_types_list[4]: LeaderboardRenderer(leaderboard_types_list[4]),
+    leaderboard_types_list[5]: LeaderboardRenderer(leaderboard_types_list[5])
 }
 
 class DatabaseCommands(commands.Cog):
@@ -180,7 +188,9 @@ class DatabaseCommands(commands.Cog):
             await asyncio.gather(update_valorant_rank_leaderboard(),
                                  update_valorant_dm_leaderboard(),
                                  update_voltaic_s5_leaderboard(),
-                                 update_voltaic_val_s1_leaderboard())
+                                 update_voltaic_val_s1_leaderboard(),
+                                 update_dojo_aimlabs_balanced_playlist_leaderboard(),
+                                 update_dojo_aimlabs_advanced_playlist_leaderboard())
             end_time = time.time()
             logger.info(f"Done updating all leaderboards in "
                         f"{end_time - start_time:.2f} s")
@@ -314,6 +324,10 @@ class DatabaseCommands(commands.Cog):
                 return await get_voltaic_s5_benchmarks_leaderboard_data()
             case "voltaic_S1_valorant_benchmarks_leaderboard":
                 return await get_voltaic_s1_val_benchmarks_leaderboard_data()
+            case "dojo_aimlabs_playlist_balanced":
+                return await get_dojo_aimlabs_playlist_balanced_leaderboard_data()
+            case "dojo_aimlabs_playlist_advanced":
+                return await get_dojo_aimlabs_playlist_advanced_leaderboard_data()
             case "discord_profiles":
                 return await get_discord_profiles()
 
@@ -342,8 +356,8 @@ class DatabaseCommands(commands.Cog):
     async def regenerate_discord_user_avatar(self):
         data = await self.get_data("discord_profiles")
         guild = self.bot.get_guild(GUILD_ID)
+        now = datetime.now(timezone.utc).timestamp()
         async def process_avatar(user_id, discord_username):
-            now = datetime.now(timezone.utc).timestamp()
             path = AVATAR_CACHE_DIR / f"{user_id}.jpeg"
             if os.path.exists(path):
                 if now - os.path.getmtime(path) < 86400:

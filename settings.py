@@ -41,7 +41,11 @@ LEADERBOARD_TYPES = {
                                                         "leaderboard"],
     "voltaic_S1_valorant_benchmarks_leaderboard": ["Voltaic VAL S1",
                                                    "Voltaic VAL benchmarks "
-                                                   "leaderboard"]
+                                                   "leaderboard"],
+    "dojo_aimlabs_playlist_balanced": ["Balanced Dojo Aimlabs Playlist",
+                                       "Balanced Dojo Aimlabs Playlist"],
+    "dojo_aimlabs_playlist_advanced": ["Advanced Dojo Aimlabs Playlist",
+                                       "Advanced Dojo Aimlabs Playlist"]
 }
 
 VERIFIED_USERS = [123229985791016961, 363658627950706698]
@@ -66,6 +70,26 @@ API_HEADER_FIELDS = {
         "rate_limit": ""
     },
 }
+
+DOJO_AIMLABS_PLAYLIST_BALANCED = [
+    "CsLevel.VT Lowgravity56.VT Refle.SXBIE3",
+    "CsLevel.VT Lowgravity56.VT Peeks.SXBIMN",
+    "CsLevel.VT Lowgravity56.VT Sinip.SXBIWU",
+    "CsLevel.VT Lowgravity56.VT Dynam.SEML1U",
+    "CsLevel.VT Lowgravity56.VT Lorys.SII0N0",
+    "CsLevel.Lowgravity56.VT Straf.RX8M65",
+    "CsLevel.VT Lowgravity56.VT Angle.SX9GAE"
+]
+
+DOJO_AIMLABS_PLAYLIST_ADVANCED = [
+    "CsLevel.VT Lowgravity56.VT Refle.SXERI8",
+    "CsLevel.Lowgravity56.VT Peeks.RLW020",
+    "CsLevel.Lowgravity56.VT Sinip.RL5NX1",
+    "CsLevel.VT Lowgravity56.VT Dynam.SEML1U",
+    "CsLevel.VT Lowgravity56.VT Lorys.SII0N0",
+    "CsLevel.Lowgravity56.VT Straf.RX8M65",
+    "CsLevel.VT Lowgravity56.VT Angle.SX9GAE"
+]
 
 S5_VOLTAIC_RANKS = {
     0: {"name": "Unranked", "id": "0"},

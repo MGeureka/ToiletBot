@@ -2,6 +2,7 @@ import json
 import aiohttp, aiofiles, asyncio
 from functools import partial
 from typing import Any
+from collections import defaultdict
 
 from services.api.kovaaks_api import update_benchmark_scenario_list
 from settings import S1_VOLTAIC_VAL_BENCHMARKS_CONFIG
@@ -114,6 +115,7 @@ async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str]):
 
             # Create a dictionary to store scores: {user_id: {task_id: score}}
             user_scores = {}
+            task_scores = defaultdict(list)
             for entry in data['data']['aimlab']['plays_agg']:
                 user_id = entry['group_by']['user_id']
                 task_id = entry['group_by']['task_id']
@@ -121,9 +123,18 @@ async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str]):
 
                 if user_id not in user_scores:
                     user_scores[user_id] = {}
-
+                if score >= 0:
+                    task_scores[task_id].append(score)
                 user_scores[user_id][task_id] = score
-            return user_scores, headers
+            task_min_max = {
+                task_id: {
+                    'min': min(scores),
+                    'max': max(scores),
+                    'scores': scores  # Optional: Keep all scores if needed
+                }
+                for task_id, scores in task_scores.items() if scores
+            }
+            return (user_scores, task_min_max), headers
     except Exception as e:
         raise ErrorFetchingData(f"API returned status "
                                 f"`{response.status}` Reason: {str(e)}",
@@ -179,5 +190,10 @@ async def teardown(bot):
 #     import asyncio
 #     loop = asyncio.new_event_loop()
 #     loop.run_until_complete(setup(None))
-#     loop.run_until_complete(fetch_s1_val_benchmarks(aimlabs_id="ADC126093FDFBA6"))
+#     loop.run_until_complete(fetch_user_plays(user_ids=["ADC126093FDFBA6"], all_task_ids=[
+#         "CsLevel.VT Lowgravity56.VT Dynam.SEML1U",
+#         "CsLevel.VT Lowgravity56.VT Lorys.SII0N0",
+#         "CsLevel.Lowgravity56.VT Straf.RX8M65",
+#         "CsLevel.VT Lowgravity56.VT Angle.SX9GAE"
+#     ]))
 

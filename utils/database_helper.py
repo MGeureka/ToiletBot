@@ -337,5 +337,23 @@ def get_last_monday_12am_est() -> datetime:
     return last_monday.astimezone(timezone.utc)
 
 
+def calculate_dojo_playlist_score(scores, all_task_ids, max_min_scores):
+    energies = []
+    for score, task_id in zip(scores, all_task_ids):
+        max_score = max_min_scores[task_id]['max']
+        min_score = max_min_scores[task_id]['min']
+        if max_score == min_score:
+            energy = 100
+        else:
+            raw = (score - min_score) / (max_score - min_score)
+            normalized = max(0, min(raw, 1))
+            energy = (normalized ** 2) * 100
+        # print(score, task_id, energy, max_score, min_score)
+        energies.append(energy)
+    epsilon = 1e-6
+    values = [v if v > 0 else epsilon for v in energies]
+    return len(values) / sum(1 / v for v in values)
+
+
 async def setup(bot): pass
 async def teardown(bot): pass

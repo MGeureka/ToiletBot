@@ -4,13 +4,16 @@ from utils.database_helper import (get_valorant_profiles, executemany_commit,
                                    get_date_updated, get_datetime,
                                    execute_fetch, get_kovaaks_profiles,
                                    calculate_energy, get_aimlabs_profiles,
-                                   get_last_monday_12am_est)
+                                   get_last_monday_12am_est,
+                                   calculate_dojo_playlist_score)
 from services.api.val_api import fetch_rating, fetch_dms
 from services.api.kovaaks_api import (get_s5_novice_benchmark_scores,
                                       get_s5_intermediate_benchmark_scores,
                                       get_s5_advance_benchmark_scores)
 from services.api.aimlabs_api import fetch_user_plays
-from settings import S1_VOLTAIC_VAL_BENCHMARKS_CONFIG
+from settings import (S1_VOLTAIC_VAL_BENCHMARKS_CONFIG,
+                      DOJO_AIMLABS_PLAYLIST_ADVANCED,
+                      DOJO_AIMLABS_PLAYLIST_BALANCED)
 from collections import defaultdict
 from utils.log import logger
 import time
@@ -84,8 +87,6 @@ async def update_valorant_dm_leaderboard():
                                       f"WHERE discord_id = ?",
                                       (discord_id,),
                                       "valorant_dm_leaderboard")
-        # print(discord_username)
-        # print(dm_json)
         dms = []
         if dm_json:
             if dm_json[0][0] != '':
@@ -207,7 +208,7 @@ async def update_voltaic_val_s1_leaderboard():
         all_task_ids.extend([scenario['task_id'] for scenario in config[category]])
 
     # Fetch scores for all users and tasks in a single batch
-    all_user_scores = await fetch_user_plays(user_ids, all_task_ids)
+    all_user_scores, _ = await fetch_user_plays(user_ids, all_task_ids)
 
     all_values = []
     now = datetime.now(timezone.utc).isoformat()
@@ -255,6 +256,94 @@ async def update_voltaic_val_s1_leaderboard():
     end_time = time.time()
     runtime = end_time - start_time
     logger.info(f"Done updating voltaic val S1 leaderboard in {runtime:.2f}s")
+
+
+async def update_dojo_aimlabs_balanced_playlist_leaderboard():
+    start_time = time.time()
+    sql_statement = """
+        INSERT INTO dojo_aimlabs_playlist_balanced (
+            discord_id, discord_username, aimlabs_id, aimlabs_username,
+            date_updated, score
+        )
+        VALUES(?, ?, ?, ?, ?, ?)
+        ON CONFLICT (discord_id) DO UPDATE SET
+            score = excluded.score,
+            date_updated = excluded.date_updated
+    """
+    aimlabs_profiles = await get_aimlabs_profiles()
+    user_ids = [profile[2] for profile in aimlabs_profiles]
+    all_task_ids = DOJO_AIMLABS_PLAYLIST_BALANCED
+    all_user_scores, max_min_scores = \
+        await fetch_user_plays(user_ids, all_task_ids)
+    all_values = []
+    now = datetime.now(timezone.utc).isoformat()
+    for profile in aimlabs_profiles:
+        discord_id, discord_username, aimlabs_id, aimlabs_username = profile
+        try:
+            user_scores = all_user_scores[aimlabs_id]
+            scores = [user_scores.get(task_id, 0) for task_id in all_task_ids]
+        except KeyError:
+            scores = [0]*7
+        energy = calculate_dojo_playlist_score(
+            scores, all_task_ids, max_min_scores
+        )
+        all_values.append((
+            discord_id, discord_username, aimlabs_id, aimlabs_username,
+            now, round(energy)
+        ))
+    await executemany_commit(
+        sql_statement,
+        all_values,
+        "dojo_aimlabs_playlist_balanced",
+        "UPSERT"
+    )
+    end_time = time.time()
+    runtime = end_time - start_time
+    logger.info(f"Done updating dojo_aimlabs_playlist_balanced leaderboard in {runtime:.2f}s")
+
+
+async def update_dojo_aimlabs_advanced_playlist_leaderboard():
+    start_time = time.time()
+    sql_statement = """
+        INSERT INTO dojo_aimlabs_playlist_advanced (
+            discord_id, discord_username, aimlabs_id, aimlabs_username,
+            date_updated, score
+        )
+        VALUES(?, ?, ?, ?, ?, ?)
+        ON CONFLICT (discord_id) DO UPDATE SET
+            score = excluded.score,
+            date_updated = excluded.date_updated
+    """
+    aimlabs_profiles = await get_aimlabs_profiles()
+    user_ids = [profile[2] for profile in aimlabs_profiles]
+    all_task_ids = DOJO_AIMLABS_PLAYLIST_ADVANCED
+    all_user_scores, max_min_scores = \
+        await fetch_user_plays(user_ids, all_task_ids)
+    all_values = []
+    now = datetime.now(timezone.utc).isoformat()
+    for profile in aimlabs_profiles:
+        discord_id, discord_username, aimlabs_id, aimlabs_username = profile
+        try:
+            user_scores = all_user_scores[aimlabs_id]
+            scores = [user_scores.get(task_id, 0) for task_id in all_task_ids]
+        except KeyError:
+            scores = [0]*7
+        energy = calculate_dojo_playlist_score(
+            scores, all_task_ids, max_min_scores
+        )
+        all_values.append((
+            discord_id, discord_username, aimlabs_id, aimlabs_username,
+            now, round(energy)
+        ))
+    await executemany_commit(
+        sql_statement,
+        all_values,
+        "dojo_aimlabs_playlist_advanced",
+        "UPSERT"
+    )
+    end_time = time.time()
+    runtime = end_time - start_time
+    logger.info(f"Done updating dojo_aimlabs_playlist_advanced leaderboard in {runtime:.2f}s")
 
 
 async def get_dm_matches_fromdb():
@@ -322,7 +411,7 @@ async def get_voltaic_s1_val_benchmarks_leaderboard_data():
         SELECT discord_id, discord_username, current_rank, current_rank_id, 
         current_rank_rating, aimlabs_username
         FROM voltaic_S1_valorant_benchmarks_leaderboard WHERE discord_id in 
-        ({', '.join('?' for _ in profile_ids)}) 
+        ({', '.join('?' for _ in profile_ids)})
         ORDER BY current_rank_rating DESC
     """
     data = await execute_fetch(
@@ -333,14 +422,47 @@ async def get_voltaic_s1_val_benchmarks_leaderboard_data():
     return sorted_data
 
 
-# if __name__ == "__main__":
-#     import asyncio
-#     from services.api.aimlabs_api import setup, teardown
-#     new_loop = asyncio.new_event_loop()
-#     new_loop.run_until_complete(setup(None))
-#     data = new_loop.run_until_complete(update_voltaic_val_s1_leaderboard())
-#     new_loop.run_until_complete(teardown(None))
-#     print(data)
+async def get_dojo_aimlabs_playlist_balanced_leaderboard_data():
+    aimlabs_profiles = await get_aimlabs_profiles()
+    profile_ids = [profile[0] for profile in aimlabs_profiles]
+    sql_statement = f"""
+        SELECT discord_id, discord_username, score, aimlabs_username
+        FROM dojo_aimlabs_playlist_balanced WHERE discord_id in 
+        ({', '.join('?' for _ in profile_ids)})
+    """
+    data = await execute_fetch(
+        sql_statement,
+        tuple(profile_ids),
+        "dojo_aimlabs_playlist_balanced")
+    sorted_data = sorted(data, key=lambda x: int(x[2]), reverse=True)
+    return sorted_data
+
+
+async def get_dojo_aimlabs_playlist_advanced_leaderboard_data():
+    aimlabs_profiles = await get_aimlabs_profiles()
+    profile_ids = [profile[0] for profile in aimlabs_profiles]
+    sql_statement = f"""
+        SELECT discord_id, discord_username, score, aimlabs_username
+        FROM dojo_aimlabs_playlist_advanced WHERE discord_id in 
+        ({', '.join('?' for _ in profile_ids)})
+    """
+    data = await execute_fetch(
+        sql_statement,
+        tuple(profile_ids),
+        "dojo_aimlabs_playlist_advanced")
+    sorted_data = sorted(data, key=lambda x: int(x[2]), reverse=True)
+    return sorted_data
+
+
+if __name__ == "__main__":
+    import asyncio
+    import pprint
+    from services.api.aimlabs_api import setup, teardown
+    new_loop = asyncio.new_event_loop()
+    new_loop.run_until_complete(setup(None))
+    data = new_loop.run_until_complete(update_dojo_aimlabs_balanced_playlist_leaderboard())
+    new_loop.run_until_complete(teardown(None))
+    print(data)
 
 async def setup(bot): pass
 async def teardown(bot): pass
