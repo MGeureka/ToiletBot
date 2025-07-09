@@ -274,7 +274,7 @@ async def update_dojo_aimlabs_balanced_playlist_leaderboard():
     user_ids = [profile[2] for profile in aimlabs_profiles]
     all_task_ids = DOJO_AIMLABS_PLAYLIST_BALANCED
     all_user_scores, max_min_scores = \
-        await fetch_user_plays(user_ids, all_task_ids)
+        await fetch_user_plays(user_ids, all_task_ids, max_min=True)
     all_values = []
     now = datetime.now(timezone.utc).isoformat()
     for profile in aimlabs_profiles:
@@ -318,7 +318,7 @@ async def update_dojo_aimlabs_advanced_playlist_leaderboard():
     user_ids = [profile[2] for profile in aimlabs_profiles]
     all_task_ids = DOJO_AIMLABS_PLAYLIST_ADVANCED
     all_user_scores, max_min_scores = \
-        await fetch_user_plays(user_ids, all_task_ids)
+        await fetch_user_plays(user_ids, all_task_ids, max_min=True)
     all_values = []
     now = datetime.now(timezone.utc).isoformat()
     for profile in aimlabs_profiles:
@@ -329,18 +329,11 @@ async def update_dojo_aimlabs_advanced_playlist_leaderboard():
         except KeyError:
             scores = [0]*7
         energy = calculate_dojo_playlist_score(
-            scores, all_task_ids, max_min_scores
-        )
+            scores, all_task_ids, max_min_scores, discord_id)
         all_values.append((
             discord_id, discord_username, aimlabs_id, aimlabs_username,
             now, round(energy)
         ))
-    await executemany_commit(
-        sql_statement,
-        all_values,
-        "dojo_aimlabs_playlist_advanced",
-        "UPSERT"
-    )
     end_time = time.time()
     runtime = end_time - start_time
     logger.info(f"Done updating dojo_aimlabs_playlist_advanced leaderboard in {runtime:.2f}s")
@@ -460,7 +453,7 @@ if __name__ == "__main__":
     from services.api.aimlabs_api import setup, teardown
     new_loop = asyncio.new_event_loop()
     new_loop.run_until_complete(setup(None))
-    data = new_loop.run_until_complete(update_dojo_aimlabs_balanced_playlist_leaderboard())
+    data = new_loop.run_until_complete(update_dojo_aimlabs_advanced_playlist_leaderboard())
     new_loop.run_until_complete(teardown(None))
     print(data)
 

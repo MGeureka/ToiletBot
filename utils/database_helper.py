@@ -337,7 +337,7 @@ def get_last_monday_12am_est() -> datetime:
     return last_monday.astimezone(timezone.utc)
 
 
-def calculate_dojo_playlist_score(scores, all_task_ids, max_min_scores):
+def calculate_dojo_playlist_score(scores, all_task_ids, max_min_scores, discord_id):
     energies = []
     for score, task_id in zip(scores, all_task_ids):
         max_score = max_min_scores[task_id]['max']
@@ -352,7 +352,8 @@ def calculate_dojo_playlist_score(scores, all_task_ids, max_min_scores):
         energies.append(energy)
     epsilon = 1e-6
     values = [v if v > 0 else epsilon for v in energies]
-    return len(values) / sum(1 / v for v in values)
+    dojo_score = len(values) / sum(1 / v for v in values)
+    return dojo_score
 
 
 async def setup(bot): pass

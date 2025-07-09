@@ -90,7 +90,8 @@ async def close_session():
 
 
 @aimlabs_api_rate_limiter
-async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str]):
+async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str],
+                           max_min=False):
     # Prepare variables for the API query
     variables = {
         "where": {
@@ -126,14 +127,19 @@ async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str]):
                 if score >= 0:
                     task_scores[task_id].append(score)
                 user_scores[user_id][task_id] = score
-            task_min_max = {
-                task_id: {
-                    'min': min(scores),
-                    'max': max(scores),
-                    'scores': scores  # Optional: Keep all scores if needed
+            task_min_max = None
+            if max_min:
+                task_min_max = {
+                    task_id: {
+                        'min': min(scores),
+                        'max': max(scores),
+                        'scores': scores  # Optional: Keep all scores if needed
+                    }
+                    for task_id, scores in task_scores.items() if scores
                 }
-                for task_id, scores in task_scores.items() if scores
-            }
+            _data = {"user_scores": user_scores, "task_min_max": task_min_max}
+            with open(r'C:\Users\partt\PycharmProjects\aimlabs_api_data\temp\data.json', 'w', encoding='utf-8') as f:
+                json.dump(_data, f, ensure_ascii=False, indent=4)
             return (user_scores, task_min_max), headers
     except Exception as e:
         raise ErrorFetchingData(f"API returned status "
