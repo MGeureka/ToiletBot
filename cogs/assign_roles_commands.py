@@ -174,6 +174,7 @@ class RoleManager(commands.Cog):
             await interaction.followup.send(f"Ran into an unexpected error "
                                             f"(oopsie teehee).\n\n{str(e)}")
 
+
 async def setup(bot):
     await bot.add_cog(RoleManager(bot))
 async def teardown(bot): pass
