@@ -115,7 +115,7 @@ async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str],
                 data = await response.json()
             # Process the response
             if not data.get('data', {}).get('aimlab', {}).get('plays_agg'):
-                return {}, headers
+                return {}
 
             # Create a dictionary to store scores: {user_id: {task_id: score}}
             user_scores = {}
@@ -143,7 +143,7 @@ async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str],
             _data = {"user_scores": user_scores, "task_min_max": task_min_max}
             with open(r'C:\Users\partt\PycharmProjects\aimlabs_api_data\temp\data.json', 'w', encoding='utf-8') as f:
                 json.dump(_data, f, ensure_ascii=False, indent=4)
-            return (user_scores, task_min_max), headers
+            return user_scores, task_min_max
     except Exception as e:
         raise ErrorFetchingData(f"API returned status "
                                 f"`{response.status}` Reason: {str(e)}",
@@ -169,7 +169,7 @@ async def check_aimlabs_username(username:str):
                                          f"`{username}` doesn't exist",
                                          headers=headers,
                                          username=username)
-            return data['data']['aimlabProfile']['user']['id'], headers
+            return data['data']['aimlabProfile']['user']['id']
 
     except aiohttp.ClientResponseError as e:
         raise ErrorFetchingData(f"API returned status "

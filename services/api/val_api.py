@@ -48,7 +48,7 @@ async def fetch_dms(puuid: str, region: str, dm_type: str):
                 headers = response.headers
                 data = await get_json(response)
                 response.raise_for_status()
-                return data, headers
+                return data
     except UnableToDecodeJson as e:
         raise ErrorFetchingData(f"Unable to decode Valorant API "
                                 f"response.\n"
@@ -90,7 +90,7 @@ async def fetch_rating(puuid: str, region: str):
             peak_rank_id = data['data']['peak']['tier']['id']
 
             return (current_rank, current_rank_id, current_rr, peak_rank,
-                    peak_rank_id), headers
+                    peak_rank_id)
     except UnableToDecodeJson as e:
         raise ErrorFetchingData(f"Unable to decode Valorant API "
                                 f"response.\n"
@@ -124,7 +124,7 @@ async def check_valorant_username(username: str, tag: str):
                 response.raise_for_status()
                 data = await response.json()
             return (data['data']['puuid'],
-                    data['data']['region']), headers
+                    data['data']['region'])
     except Exception as e:
         raise ErrorFetchingData(f"Error while checking "
                                 f"valorant username `{username}#{tag}`. "
