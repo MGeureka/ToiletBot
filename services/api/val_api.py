@@ -11,7 +11,7 @@ from aiolimiter import AsyncLimiter
 # val_api_rate_limiter = AsyncRateLimiter("val")
 val_api_rate_limiter = UpdatedAsyncRateLimiter("val")
 val_api_session: aiohttp.ClientSession | None = None
-valorant_api_limiter = AsyncLimiter(max_rate=90, time_period=60)
+valorant_api_limiter = AsyncLimiter(max_rate=1, time_period=0.7)
 
 PLATFORM = "pc"
 
