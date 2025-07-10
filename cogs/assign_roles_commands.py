@@ -31,6 +31,7 @@ class RoleManager(commands.Cog):
             CronTrigger(day_of_week="sun", hour=23, minute=59),
         )
         self.scheduler.start()
+        logger.info("Started scheduler")
 
 
     async def weekly_task(self):
@@ -104,7 +105,9 @@ class RoleManager(commands.Cog):
                 fetched_data = await get_voltaic_s1_val_benchmarks_leaderboard_data()
             case _:
                 fetched_data = None
-        return fetched_data[0]
+        if fetched_data and len(fetched_data) > 0:
+            return fetched_data[0]
+        return None
 
 
     @staticmethod
@@ -113,11 +116,14 @@ class RoleManager(commands.Cog):
         SELECT discord_id FROM weekly_leaderboard_winners
         WHERE leaderboard_type = ?
         """
-        await execute_fetch(
+        data = await execute_fetch(
             sql_statement,
             (lb_type,),
             "weekly_leaderboard_winners"
         )
+        if data and len(data) > 0:
+            return data[0]
+        return None
 
 
     @staticmethod
