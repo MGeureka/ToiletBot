@@ -9,14 +9,11 @@ from settings import S1_VOLTAIC_VAL_BENCHMARKS_CONFIG
 from utils.errors import ErrorFetchingData, ProfileDoesntExist
 from utils.api_helper import AsyncRateLimiter, UpdatedAsyncRateLimiter
 from utils.log import logger, api_logger
-from aiolimiter import AsyncLimiter
 
 # API Endpoint
 API_ENDPOINT = "https://api.aimlab.gg/graphql"
 # aimlabs_api_rate_limiter = AsyncRateLimiter("aimlabs")
 aimlabs_api_rate_limiter = UpdatedAsyncRateLimiter("aimlabs")
-
-aimlabs_api_limiter = AsyncLimiter(max_rate=10000, time_period=60)
 
 SCENARIO_LIST_URL = \
     "https://beta.voltaic.gg/api/v1/aimlabs/benchmarks/valorant_s1"
@@ -92,6 +89,7 @@ async def close_session():
         aimlabs_api_session = None
 
 
+@aimlabs_api_rate_limiter
 async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str],
                            max_min=False):
     # Prepare variables for the API query
@@ -104,18 +102,17 @@ async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str],
         }
     }
     try:
-        async with aimlabs_api_limiter:
-            async with aimlabs_api_session.post(
-                    url=API_ENDPOINT,
-                    headers={"Content-Type": "application/json"},
-                    json={"query": GET_USER_PLAYS_AGG, "variables": variables}
-            ) as response:
-                headers = response.headers
-                response.raise_for_status()
-                data = await response.json()
+        async with aimlabs_api_session.post(
+                url=API_ENDPOINT,
+                headers={"Content-Type": "application/json"},
+                json={"query": GET_USER_PLAYS_AGG, "variables": variables}
+        ) as response:
+            headers = response.headers
+            response.raise_for_status()
+            data = await response.json()
             # Process the response
             if not data.get('data', {}).get('aimlab', {}).get('plays_agg'):
-                return {}
+                return {}, headers
 
             # Create a dictionary to store scores: {user_id: {task_id: score}}
             user_scores = {}
@@ -143,33 +140,33 @@ async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str],
             _data = {"user_scores": user_scores, "task_min_max": task_min_max}
             with open(r'C:\Users\partt\PycharmProjects\aimlabs_api_data\temp\data.json', 'w', encoding='utf-8') as f:
                 json.dump(_data, f, ensure_ascii=False, indent=4)
-            return user_scores, task_min_max
+            return (user_scores, task_min_max), headers
     except Exception as e:
         raise ErrorFetchingData(f"API returned status "
                                 f"`{response.status}` Reason: {str(e)}",
                                 headers=headers)
 
 
+@aimlabs_api_rate_limiter
 async def check_aimlabs_username(username:str):
     """Queries aimlabs api and checks if username exists."""
     try:
-        async with aimlabs_api_limiter:
-            async with aimlabs_api_session.post(
-                    url=API_ENDPOINT,
-                    headers={"Content-Type": "application/json"},
-                    json={"query": GET_USER_INFO, "variables":
-                        {"username": username}}
-            ) as response:
-                headers = response.headers
-                response.raise_for_status()
-                data = await response.json()
+        async with aimlabs_api_session.post(
+                url=API_ENDPOINT,
+                headers={"Content-Type": "application/json"},
+                json={"query": GET_USER_INFO, "variables":
+                    {"username": username}}
+        ) as response:
+            headers = response.headers
+            response.raise_for_status()
+            data = await response.json()
 
             if 'data' not in data or data['data']['aimlabProfile'] is None:
                 raise ProfileDoesntExist(f"Profile with username "
                                          f"`{username}` doesn't exist",
                                          headers=headers,
                                          username=username)
-            return data['data']['aimlabProfile']['user']['id']
+            return data['data']['aimlabProfile']['user']['id'], headers
 
     except aiohttp.ClientResponseError as e:
         raise ErrorFetchingData(f"API returned status "
@@ -186,7 +183,6 @@ async def check_aimlabs_username(username:str):
 async def setup(bot):
     global aimlabs_api_session
     global update_config
-    global limiter
     aimlabs_api_session = await get_session()
     update_config = partial(update_benchmark_scenario_list,
                             url=SCENARIO_LIST_URL,
