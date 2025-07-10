@@ -9,11 +9,14 @@ from settings import S1_VOLTAIC_VAL_BENCHMARKS_CONFIG
 from utils.errors import ErrorFetchingData, ProfileDoesntExist
 from utils.api_helper import AsyncRateLimiter, UpdatedAsyncRateLimiter
 from utils.log import logger, api_logger
+from aiolimiter import AsyncLimiter
 
 # API Endpoint
 API_ENDPOINT = "https://api.aimlab.gg/graphql"
 # aimlabs_api_rate_limiter = AsyncRateLimiter("aimlabs")
 aimlabs_api_rate_limiter = UpdatedAsyncRateLimiter("aimlabs")
+
+aimlabs_api_limiter = AsyncLimiter(max_rate=10000, time_period=60)
 
 SCENARIO_LIST_URL = \
     "https://beta.voltaic.gg/api/v1/aimlabs/benchmarks/valorant_s1"
@@ -89,7 +92,6 @@ async def close_session():
         aimlabs_api_session = None
 
 
-@aimlabs_api_rate_limiter
 async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str],
                            max_min=False):
     # Prepare variables for the API query
@@ -102,14 +104,15 @@ async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str],
         }
     }
     try:
-        async with aimlabs_api_session.post(
-                url=API_ENDPOINT,
-                headers={"Content-Type": "application/json"},
-                json={"query": GET_USER_PLAYS_AGG, "variables": variables}
-        ) as response:
-            headers = response.headers
-            response.raise_for_status()
-            data = await response.json()
+        async with aimlabs_api_limiter:
+            async with aimlabs_api_session.post(
+                    url=API_ENDPOINT,
+                    headers={"Content-Type": "application/json"},
+                    json={"query": GET_USER_PLAYS_AGG, "variables": variables}
+            ) as response:
+                headers = response.headers
+                response.raise_for_status()
+                data = await response.json()
             # Process the response
             if not data.get('data', {}).get('aimlab', {}).get('plays_agg'):
                 return {}, headers
@@ -147,19 +150,19 @@ async def fetch_user_plays(user_ids: list[str], all_task_ids: list[str],
                                 headers=headers)
 
 
-@aimlabs_api_rate_limiter
 async def check_aimlabs_username(username:str):
     """Queries aimlabs api and checks if username exists."""
     try:
-        async with aimlabs_api_session.post(
-                url=API_ENDPOINT,
-                headers={"Content-Type": "application/json"},
-                json={"query": GET_USER_INFO, "variables":
-                    {"username": username}}
-        ) as response:
-            headers = response.headers
-            response.raise_for_status()
-            data = await response.json()
+        async with aimlabs_api_limiter:
+            async with aimlabs_api_session.post(
+                    url=API_ENDPOINT,
+                    headers={"Content-Type": "application/json"},
+                    json={"query": GET_USER_INFO, "variables":
+                        {"username": username}}
+            ) as response:
+                headers = response.headers
+                response.raise_for_status()
+                data = await response.json()
 
             if 'data' not in data or data['data']['aimlabProfile'] is None:
                 raise ProfileDoesntExist(f"Profile with username "
@@ -183,6 +186,7 @@ async def check_aimlabs_username(username:str):
 async def setup(bot):
     global aimlabs_api_session
     global update_config
+    global limiter
     aimlabs_api_session = await get_session()
     update_config = partial(update_benchmark_scenario_list,
                             url=SCENARIO_LIST_URL,
@@ -190,16 +194,3 @@ async def setup(bot):
                             session=aimlabs_api_session)
 async def teardown(bot):
     await close_session()
-
-
-# if __name__ == "__main__":
-#     import asyncio
-#     loop = asyncio.new_event_loop()
-#     loop.run_until_complete(setup(None))
-#     loop.run_until_complete(fetch_user_plays(user_ids=["ADC126093FDFBA6"], all_task_ids=[
-#         "CsLevel.VT Lowgravity56.VT Dynam.SEML1U",
-#         "CsLevel.VT Lowgravity56.VT Lorys.SII0N0",
-#         "CsLevel.Lowgravity56.VT Straf.RX8M65",
-#         "CsLevel.VT Lowgravity56.VT Angle.SX9GAE"
-#     ]))
-
