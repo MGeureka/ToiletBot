@@ -346,9 +346,9 @@ class DatabaseCommands(commands.Cog):
                     logger.info(f"Set Profile "
                                 f"{discord_username} ({user_id}) to inactive")
                     return
-                has_role = await user.get_role(DEFAULT_ROLE)
+                has_role = user.get_role(DEFAULT_ROLE)
                 if not has_role:
-                    await set_profile_inactive(user_id)
+                    # await set_profile_inactive(user_id)
                     logger.info(f"Set Profile "
                                 f"{discord_username} ({user_id}) to inactive")
                     return
