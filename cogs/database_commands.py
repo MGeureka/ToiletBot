@@ -342,10 +342,11 @@ class DatabaseCommands(commands.Cog):
                 if user is None:
                     logger.error(f"Failed to get user "
                                  f"{discord_username} ({user_id})")
-                    await set_profile_inactive(user_id)
                     return
                 if not await user.get_role(DEFAULT_ROLE):
                     await set_profile_inactive(user_id)
+                    logger.info(f"Set Profile "
+                                f"{discord_username} ({user_id}) to inactive")
                 user_nick = user.nick or user.display_name
                 asset = user.display_avatar or user.default_avatar
                 await update_discord_profile(user_nick, user_id)

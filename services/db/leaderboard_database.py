@@ -329,7 +329,7 @@ async def update_dojo_aimlabs_advanced_playlist_leaderboard():
         except KeyError:
             scores = [0]*7
         energy = calculate_dojo_playlist_score(
-            scores, all_task_ids, max_min_scores, discord_id)
+            scores, all_task_ids, max_min_scores)
         all_values.append((
             discord_id, discord_username, aimlabs_id, aimlabs_username,
             now, round(energy)
