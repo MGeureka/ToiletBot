@@ -69,7 +69,11 @@ class RoleManager(commands.Cog):
             logger.info(f"Found top scorer from last week, id: {last_winner_id}")
             last_winner = guild.get_member(last_winner_id) if last_winner_id else None
 
-            role = await discord.utils.get(guild.roles, id=self.get_role_from_lb_type(leaderboard_type))
+            role_id = self.get_role_from_lb_type(leaderboard_type)
+            if not role_id:
+                logger.error(f"Role ID for {leaderboard_type} not found, skipping...")
+                continue
+            role = discord.utils.get(guild.roles, id=role_id)
             logger.info(f"Found corresponding role {role.name}")
             if not role:
                 logger.error(f"Role for {leaderboard_type} not found.")
