@@ -5,7 +5,6 @@ import time
 from datetime import datetime, timezone
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-import cProfile
 from io import BytesIO
 from PIL import Image
 import discord
@@ -28,7 +27,8 @@ from services.db.leaderboard_database import (
     get_dojo_aimlabs_playlist_balanced_leaderboard_data,
     get_dojo_aimlabs_playlist_advanced_leaderboard_data
 )
-from utils.database_helper import get_profiles_from_db, get_discord_profiles
+from utils.database_helper import (get_profiles_from_db, get_discord_profiles,
+                                   set_profile_inactive)
 from utils.errors import CheckError
 from utils.image_gen import LeaderboardRenderer, delete_files_indir
 import traceback
@@ -54,6 +54,10 @@ LEADERBOARD_RENDERER = {
     leaderboard_types_list[4]: LeaderboardRenderer(leaderboard_types_list[4]),
     leaderboard_types_list[5]: LeaderboardRenderer(leaderboard_types_list[5])
 }
+
+DEFAULT_ROLE = 1333353367896068146
+
+
 
 class DatabaseCommands(commands.Cog):
     def __init__(self, bot):
@@ -318,6 +322,12 @@ class DatabaseCommands(commands.Cog):
                                             f"(oopsie teehee).\n\n{str(e)}")
 
 
+    @staticmethod
+    async def check_user_has_role(role_id, member: discord.Member) -> bool:
+        roles = member.roles
+        return role_id in [role for role in member.roles]
+
+
     async def regenerate_discord_user_avatar(self):
         data = await self.get_data("discord_profiles")
         guild = self.bot.get_guild(GUILD_ID)
@@ -332,7 +342,10 @@ class DatabaseCommands(commands.Cog):
                 if user is None:
                     logger.error(f"Failed to get user "
                                  f"{discord_username} ({user_id})")
+                    await set_profile_inactive(user_id)
                     return
+                if not await user.get_role(DEFAULT_ROLE):
+                    await set_profile_inactive(user_id)
                 user_nick = user.nick or user.display_name
                 asset = user.display_avatar or user.default_avatar
                 await update_discord_profile(user_nick, user_id)

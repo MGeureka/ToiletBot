@@ -22,112 +22,38 @@ def get_datetime(datetime_str: str):
 
 async def execute_commit(query: str, values: tuple, table_name: str,
                          operation: str) -> None:
-    transaction_id = str(uuid.uuid4())
     async with aiosqlite.connect(DB_PATH, timeout=10.0) as db:
         await db.execute("PRAGMA foreign_keys = ON;")
         try:
             async with db.execute(query, values) as cur:
-                affected_rows = cur.rowcount if hasattr(cur, 'rowcount') else 0
                 await db.commit()
-                # await log_transaction(
-                #     db=db,
-                #     transaction_id=transaction_id,
-                #     operation=operation,
-                #     table_name=table_name,
-                #     query=query,
-                #     parameters=values,
-                #     status="SUCCESS",
-                #     error_message=None,
-                #     affected_rows=affected_rows
-                # )
 
         except Exception as e:
             await db.rollback()
-            # await log_transaction(
-            #     db=db,
-            #     transaction_id=transaction_id,
-            #     operation=operation,
-            #     table_name=table_name,
-            #     query=query,
-            #     parameters=values,
-            #     status="ERROR",
-            #     error_message=str(e),
-            #     affected_rows=0
-            # )
-
             raise e
 
 
 async def executemany_commit(query: str, values: list[tuple], table_name: str,
                          operation: str) -> None:
-    transaction_id = str(uuid.uuid4())
     async with aiosqlite.connect(DB_PATH, timeout=10) as db:
         await db.execute("PRAGMA foreign_keys = ON;")
         try:
             async with db.executemany(query, values) as cur:
                 affected_rows = cur.rowcount if hasattr(cur, 'rowcount') else 0
                 await db.commit()
-                # await log_transaction(
-                #     db=db,
-                #     transaction_id=transaction_id,
-                #     operation=operation,
-                #     table_name=table_name,
-                #     query=query,
-                #     parameters=values,
-                #     status="SUCCESS",
-                #     error_message=None,
-                #     affected_rows=affected_rows
-                # )
-
         except Exception as e:
             await db.rollback()
-            # await log_transaction(
-            #     db=db,
-            #     transaction_id=transaction_id,
-            #     operation=operation,
-            #     table_name=table_name,
-            #     query=query,
-            #     parameters=values,
-            #     status="ERROR",
-            #     error_message=str(e),
-            #     affected_rows=0
-            # )
-
             raise e
 
 
 async def execute_fetch(query: str, values: tuple, table_name: str) -> list:
-    transaction_id = str(uuid.uuid4())
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute("PRAGMA foreign_keys = ON;")
         try:
             async with db.execute(query, values) as cur:
                 results = await cur.fetchall()
-
-                # await log_transaction(
-                #     db=db,
-                #     transaction_id=transaction_id,
-                #     operation="SELECT",
-                #     table_name=table_name,
-                #     query=query,
-                #     parameters=values,
-                #     status="SUCCESS",
-                #     error_message=None,
-                #     affected_rows=len(results)
-                # )
                 return results
         except Exception as e:
-            # await log_transaction(
-            #     db=db,
-            #     transaction_id=transaction_id,
-            #     operation="SELECT",
-            #     table_name=table_name,
-            #     query=query,
-            #     parameters=values,
-            #     status="ERROR",
-            #     error_message=str(e),
-            #     affected_rows=0
-            # )
             raise e
 
 
@@ -354,6 +280,22 @@ def calculate_dojo_playlist_score(scores, all_task_ids, max_min_scores, discord_
     values = [v if v > 0 else epsilon for v in energies]
     dojo_score = len(values) / sum(1 / v for v in values)
     return dojo_score
+
+
+async def set_profile_inactive(discord_id):
+    sql_statement = """
+    UPDATE {table}
+    SET is_active = 0
+    WHERE discord_id = ?
+    """
+    tables = ["aimlabs_profiles", "kovaaks_profiles", "valorant_profiles"]
+    for table in tables:
+        await execute_commit(
+            sql_statement.format(table=table),
+            (discord_id,),
+            "N/A",
+            "UPDATE"
+        )
 
 
 async def setup(bot): pass
