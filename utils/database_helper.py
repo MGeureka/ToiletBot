@@ -243,10 +243,6 @@ async def calculate_energy(novice, intermediate, advanced, bench_type: str):
     rounded_energy = min(((energy // 100) * 100), 1200)
     complete = True if all(score >= rounded_energy
                            for score in energy_list[max_index]) else False
-    # print(f"{energy=}")
-    # print(f"{rounded_energy=}")
-    # print(f"{scores[max_index]=}")
-    # print(f"{complete=}")
     if complete:
         return (ranks_complete[rounded_energy]['name'],
                 ranks_complete[rounded_energy]['id'], energy)
@@ -263,7 +259,7 @@ def get_last_monday_12am_est() -> datetime:
     return last_monday.astimezone(timezone.utc)
 
 
-def calculate_dojo_playlist_score(scores, all_task_ids, max_min_scores, discord_id):
+def calculate_dojo_playlist_score(scores, all_task_ids, max_min_scores):
     energies = []
     for score, task_id in zip(scores, all_task_ids):
         max_score = max_min_scores[task_id]['max']
@@ -274,7 +270,6 @@ def calculate_dojo_playlist_score(scores, all_task_ids, max_min_scores, discord_
             raw = (score - min_score) / (max_score - min_score)
             normalized = max(0, min(raw, 1))
             energy = (normalized ** 2) * 1000
-        # print(score, task_id, energy, max_score, min_score)
         energies.append(energy)
     epsilon = 1e-6
     values = [v if v > 0 else epsilon for v in energies]
