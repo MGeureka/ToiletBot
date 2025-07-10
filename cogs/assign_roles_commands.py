@@ -52,7 +52,8 @@ class RoleManager(commands.Cog):
                     leaderboard_type == "voltaic_S1_valorant_benchmarks_leaderboard"):
                 continue
             # Get top scorer for that week
-            winner_id = await self.get_top_scorer_from_db(leaderboard_type)
+            raw_winner_id = await self.get_top_scorer_from_db(leaderboard_type)
+            winner_id = raw_winner_id[0]
             logger.info(f"Found to scorer from this week, id: {winner_id}")
             if not winner_id:
                 logger.error(f"Winner ID for {leaderboard_type} not found, skipping...")
@@ -61,11 +62,11 @@ class RoleManager(commands.Cog):
             # Fetch winner + last winner
             winner = guild.get_member(winner_id)
             last_winner_id = await self.get_last_winner(leaderboard_type)
-            logger.info(f"Fount top scorer from last week, id: {last_winner_id}")
+            logger.info(f"Found top scorer from last week, id: {last_winner_id}")
             last_winner = guild.get_member(last_winner_id) if last_winner_id else None
 
             role = await discord.utils.get(guild.roles, id=self.get_role_from_lb_type(leaderboard_type))
-
+            logger.info(f"Found corresponding role {role.name}")
             if not role:
                 logger.error(f"Role for {leaderboard_type} not found.")
                 continue
