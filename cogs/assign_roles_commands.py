@@ -38,6 +38,10 @@ class RoleManager(commands.Cog):
         logger.info("Started scheduler")
 
 
+    def cog_unload(self):
+        self.scheduler.shutdown()
+
+
     async def weekly_task(self):
         logger.info("Running weekly task every Sunday at 11:59 PM Eastern")
         await self.update_weekly_roles()
@@ -54,7 +58,7 @@ class RoleManager(commands.Cog):
             # Get top scorer for that week
             raw_winner_id = await self.get_top_scorer_from_db(leaderboard_type)
             winner_id = raw_winner_id[0]
-            logger.info(f"Found to scorer from this week, id: {winner_id}")
+            logger.info(f"Found top scorer from this week, id: {winner_id}")
             if not winner_id:
                 logger.error(f"Winner ID for {leaderboard_type} not found, skipping...")
                 continue
