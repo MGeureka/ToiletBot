@@ -26,9 +26,13 @@ class RoleManager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.scheduler = AsyncIOScheduler(timezone=ZoneInfo("America/New_York"))
+        # self.scheduler.add_job(
+        #     self.weekly_task,
+        #     CronTrigger(day_of_week="sun", hour=23, minute=59),
+        # )
         self.scheduler.add_job(
             self.weekly_task,
-            CronTrigger(day_of_week="sun", hour=23, minute=59),
+            CronTrigger(minute="*"),
         )
         self.scheduler.start()
         logger.info("Started scheduler")
@@ -43,7 +47,9 @@ class RoleManager(commands.Cog):
         guild = self.bot.get_guild(GUILD_ID)
         for leaderboard_type in LEADERBOARD_TYPES:
             if (leaderboard_type == "dojo_aimlabs_playlist_balanced" or
-                    leaderboard_type == "dojo_aimlabs_playlist_advanced"):
+                    leaderboard_type == "dojo_aimlabs_playlist_advanced" or
+                    leaderboard_type == "voltaic_S5_benchmarks_leaderboard" or
+                    leaderboard_type == "voltaic_S1_valorant_benchmarks_leaderboard"):
                 continue
 
             # Get top scorer for that week
@@ -57,7 +63,7 @@ class RoleManager(commands.Cog):
             last_winner_id = await self.get_last_winner(leaderboard_type)
             last_winner = guild.get_member(last_winner_id) if last_winner_id else None
 
-            role = discord.utils.get(guild.roles, id=self.get_role_from_lb_type(leaderboard_type))
+            role = await discord.utils.get(guild.roles, id=self.get_role_from_lb_type(leaderboard_type))
 
             if not role:
                 logger.error(f"Role for {leaderboard_type} not found.")
@@ -65,10 +71,12 @@ class RoleManager(commands.Cog):
 
             # Remove role from old winner
             if last_winner and role in last_winner.roles:
+                logger.info(f"Removed {role.name} for {leaderboard_type} from {last_winner.nick or last_winner.name}")
                 await last_winner.remove_roles(role)
 
             # Assign role to new winner
             if winner and role not in winner.roles:
+                logger.info(f"Assigned {role.name} for {leaderboard_type} to {winner.nick or winner.name}")
                 await winner.add_roles(role)
 
             # Save this new winner to the DB
@@ -83,10 +91,6 @@ class RoleManager(commands.Cog):
                 role_id = 1392632876931088487
             case "valorant_dm_leaderboard":
                 role_id = 1392631799783358594
-            case "voltaic_S5_benchmarks_leaderboard":
-                role_id = 1392633052886339584
-            case "voltaic_S1_valorant_benchmarks_leaderboard":
-                role_id = 1392633052886339584
             case _:
                 role_id = None
         return role_id
