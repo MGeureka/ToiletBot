@@ -342,11 +342,15 @@ class DatabaseCommands(commands.Cog):
                 if user is None:
                     logger.error(f"Failed to get user "
                                  f"{discord_username} ({user_id})")
+                    await set_profile_inactive(user_id)
+                    logger.info(f"Set Profile "
+                                f"{discord_username} ({user_id}) to inactive")
                     return
                 if not await user.get_role(DEFAULT_ROLE):
                     await set_profile_inactive(user_id)
                     logger.info(f"Set Profile "
                                 f"{discord_username} ({user_id}) to inactive")
+                    return
                 user_nick = user.nick or user.display_name
                 asset = user.display_avatar or user.default_avatar
                 await update_discord_profile(user_nick, user_id)
@@ -361,7 +365,6 @@ class DatabaseCommands(commands.Cog):
                              f"{discord_username} ({user_id}): "
                              f"{str(e)}")
                 return
-
 
         await asyncio.gather(*[process_avatar(profile[0], profile[1]) for profile in data])
 
