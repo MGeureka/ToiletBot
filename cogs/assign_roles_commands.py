@@ -32,9 +32,7 @@ class RoleManager(commands.Cog):
         )
         self.scheduler.start()
 
-    @scheduler.scheduled_job(
-        CronTrigger(day_of_week="sun", hour=23, minute=59, timezone=eastern)
-    )
+
     async def weekly_task(self):
         logger.info("Running weekly task every Sunday at 11:59 PM Eastern")
         await self.update_weekly_roles()
