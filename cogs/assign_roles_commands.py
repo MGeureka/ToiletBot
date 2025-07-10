@@ -138,7 +138,7 @@ class RoleManager(commands.Cog):
         )
 
 
-    @@app_commands.command(name="assign_winner_role",
+    @app_commands.command(name="assign_winner_role",
                            description="Manually assign winner role.")
     @is_correct_author()
     @is_correct_channel()
