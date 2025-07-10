@@ -361,6 +361,10 @@ class DatabaseCommands(commands.Cog):
                 avatar = avatar.convert("RGB")
                 with AVATAR_CACHE_LOCK:
                     avatar.save(path)
+            except discord.NotFound as e:
+                logger.info(f"Failed to find {discord_username} ({user_id}) "
+                            f"in guild, setting to inactive in database")
+                await set_profile_inactive(user_id)
             except Exception as e:
                 logger.error(f"Error updating avatar/username for "
                              f"{discord_username} ({user_id}): "
