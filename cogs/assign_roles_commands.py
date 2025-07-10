@@ -122,7 +122,7 @@ class RoleManager(commands.Cog):
             "weekly_leaderboard_winners"
         )
         if data and len(data) > 0:
-            return data[0]
+            return data[0][0]
         return None
 
 
@@ -174,6 +174,6 @@ class RoleManager(commands.Cog):
             await interaction.followup.send(f"Ran into an unexpected error "
                                             f"(oopsie teehee).\n\n{str(e)}")
 
-def setup(bot):
-    bot.add_cog(RoleManager(bot))
-def teardown(bot): pass
+async def setup(bot):
+    await bot.add_cog(RoleManager(bot))
+async def teardown(bot): pass
