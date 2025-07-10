@@ -26,13 +26,9 @@ class RoleManager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.scheduler = AsyncIOScheduler(timezone=ZoneInfo("America/New_York"))
-        # self.scheduler.add_job(
-        #     self.weekly_task,
-        #     CronTrigger(day_of_week="sun", hour=23, minute=59),
-        # )
         self.scheduler.add_job(
             self.weekly_task,
-            CronTrigger(minute="*"),
+            CronTrigger(day_of_week="sun", hour=23, minute=59),
         )
         self.scheduler.start()
         logger.info("Started scheduler")
