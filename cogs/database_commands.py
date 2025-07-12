@@ -381,7 +381,6 @@ class DatabaseCommands(commands.Cog):
         image_tasks = []
         for leaderboard_type in leaderboard_list:
             data = await self.get_data(leaderboard_type)
-            # data *= 21
             total_pages = max(1, ((len(data) + leaderboard_page_size - 1) //
                                   leaderboard_page_size))
             async with LEADERBOARD_CACHE_LOCK:
@@ -441,7 +440,7 @@ async def setup(bot):
         cog.refresh_leaderboards.start()
 
 
-if __name__ == '__main__':
-    loop = asyncio.new_event_loop()
-    cog = DatabaseCommands(None)
-    loop.run_until_complete(cog.regen_images(None))
+# if __name__ == '__main__':
+#     loop = asyncio.new_event_loop()
+#     cog = DatabaseCommands(None)
+#     loop.run_until_complete(cog.regen_images(None))
