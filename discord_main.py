@@ -52,8 +52,8 @@ all_extensions = [
     'cogs.database_commands',
     'cogs.leaderboard_commands',
     'cogs.assign_roles_commands',
-    # 'cogs.dojo_commands',
-    # 'cogs.events_listener',
+    'cogs.dojo_commands',
+    'cogs.events_listener',
     # 'cogs.rotating_leaderboard_commands'
 ]
 
@@ -127,8 +127,9 @@ async def setup_hook():
 
 @bot.event
 async def on_error(event, error, *args, **kwargs):
-    # error = sys.exc_info()[1]
-    error_message = f"Unhandled error in {event}: {error.__class__.__name__}: {error}"
+    error_message = (f"Unhandled error in {event}: "
+                     f"{error.__class__.__name__}: {str(error)}"
+                     f"\n{traceback.format_exc()}")
     logger.error(error_message)
 
 

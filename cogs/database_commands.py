@@ -150,6 +150,7 @@ class DatabaseCommands(commands.Cog):
 
     @tasks.loop(minutes=10)
     async def refresh_leaderboards(self):
+        return
         try:
             logger.info("Updating all leaderboards...")
             self.updating = True
