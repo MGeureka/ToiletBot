@@ -23,6 +23,7 @@ all_extensions = [
     # Config
     'settings',
     'configs.leaderboard_config',
+    'services.db.pool',
 
     # Util functions
     'utils.log',
