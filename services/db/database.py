@@ -1,7 +1,6 @@
 import asyncio
 import asyncpg
 from typing import Optional
-import traceback
 import itertools
 from contextlib import asynccontextmanager
 from settings import DSN
