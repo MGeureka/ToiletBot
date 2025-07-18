@@ -38,7 +38,15 @@ LOGGING_CONFIG = {
             "mode": "w",
             "formatter": "verbose",
             "encoding": "utf-8",
-        }
+        },
+        "DB_LOG": {
+            "level": "INFO",
+            "class": "logging.FileHandler",
+            "filename": f"{LOGS_DIR}/db_log.log",
+            "mode": "w",
+            "formatter": "verbose",
+            "encoding": "utf-8",
+        },
     },
     "loggers": {
         "bot": {
@@ -53,6 +61,11 @@ LOGGING_CONFIG = {
         },
         "api": {
             "handlers": ["API_LOG"],
+            "level": "DEBUG",
+            "propagate": False
+        },
+        "db": {
+            "handlers": ["DB_LOG"],
             "level": "DEBUG",
             "propagate": False
         },

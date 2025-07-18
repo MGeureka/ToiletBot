@@ -3,7 +3,6 @@ from asyncio import timeout
 from settings import DB_PATH
 import aiosqlite
 import uuid, aiofiles, json
-from utils.log import log_transaction
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
 

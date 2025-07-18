@@ -12,7 +12,7 @@ from discord.ext import commands
 from discord import app_commands
 from discord.ext import tasks
 
-from services.db.database import update_discord_profile
+from services.db.discord_database import update_discord_profile
 from services.db.leaderboard_database import (
     update_valorant_rank_leaderboard,
     update_valorant_dm_leaderboard,

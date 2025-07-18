@@ -1,10 +1,12 @@
-import settings
+import asyncio
+import traceback
 import discord
 from discord.ext import commands
 from utils.log import logger
 from utils.checks import is_correct_channel, is_correct_author
 from utils.errors import CheckError
-import traceback
+from settings import DISCORD_API_SECRET, DSN
+from services.db.database import init_db_pool
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -23,7 +25,9 @@ all_extensions = [
     # Config
     'settings',
     'configs.leaderboard_config',
-    'services.db.pool',
+
+    # Pool
+    'services.db.database',
 
     # Util functions
     'utils.log',
@@ -39,7 +43,7 @@ all_extensions = [
     'services.api.kovaaks_api',
 
     # Services Database
-    'services.db.database',
+    'services.db.discord_database',
     'services.db.val_database',
     'services.db.aimlabs_database',
     'services.db.kovaaks_database',
@@ -55,6 +59,7 @@ all_extensions = [
     'cogs.assign_roles_commands',
     'cogs.dojo_commands',
     'cogs.events_listener',
+    'cogs.test_cog',
     # 'cogs.rotating_leaderboard_commands'
 ]
 
@@ -136,4 +141,4 @@ async def on_error(event, error, *args, **kwargs):
 
 bot.setup_hook = setup_hook
 
-bot.run(settings.DISCORD_API_SECRET, root_logger=True)
+bot.run(DISCORD_API_SECRET, root_logger=True)
