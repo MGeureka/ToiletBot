@@ -5,7 +5,7 @@ import aiosqlite
 import uuid, aiofiles, json
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
-
+from services.db.database import Database
 from settings import (S5_VOLTAIC_BENCHMARKS_CONFIG,
                       S5_VOLTAIC_RANKS,
                       S5_VOLTAIC_RANKS_COMPLETE,
@@ -87,7 +87,8 @@ async def check_profile_indb(discord_id: str, profile: str,
     return True if data else False
 
 
-async def get_profiles_from_db(discord_id: int, profile: str) -> tuple:
+async def get_profile_from_db(db: Database, discord_id: int, guild_id: int,
+                              profile: str) -> tuple:
     """Returns a tuple of the profile and activity status
 
     discord_id: The discord id
@@ -95,28 +96,35 @@ async def get_profiles_from_db(discord_id: int, profile: str) -> tuple:
     """
     match profile:
         case "discord":
-            sql_statement = f"""SELECT discord_username 
-                                FROM discord_profiles WHERE discord_id = ?"""
-            table_name = "discord_profiles"
+            sql_statement = f"""
+            SELECT p.discord_username FROM guilds.guild_membership gm 
+            JOIN profiles.discord_profiles p ON gm.discord_id = p.discord_id 
+            WHERE gm.discord_id = $1 AND gm.guild_id = $2;"""
         case "val":
-            sql_statement = f"""SELECT valorant_id, valorant_username, 
-                                valorant_tag, is_active, region FROM 
-                                valorant_profiles WHERE discord_id = ?"""
-            table_name = "valorant_profiles"
+            sql_statement = f"""
+            SELECT (va.valorant_id, va.valorant_username, va.valorant_tag, 
+            va.region, vp.is_active) FROM accounts.global_valorant_accounts va 
+            JOIN profiles.valorant_profiles vp ON 
+            va.valorant_id = vp.valorant_id
+            WHERE discord_id = $1 AND guild_id = $2"""
         case "aimlabs":
-            sql_statement = f"""SELECT aimlabs_id, aimlabs_username, is_active
-                                FROM aimlabs_profiles WHERE discord_id = ?"""
-            table_name = "aimlabs_profiles"
+            sql_statement = f"""
+            SELECT (aa.aimlabs_id, aa.aimlabs_username, ap.is_active) 
+            FROM accounts.global_aimlabs_accounts aa 
+            JOIN profiles.aimlabs_profiles ap ON 
+            aa.aimlabs_id = ap.aimlabs_id
+            WHERE discord_id = $1 AND guild_id = $2"""
         case "kovaaks":
-            sql_statement = f"""SELECT kovaaks_id, kovaaks_username, steam_id, 
-                                steam_username, is_active
-                                FROM kovaaks_profiles WHERE discord_id = ?"""
-            table_name = "kovaaks_profiles"
+            sql_statement = f"""
+            SELECT (ka.kovaaks_id, ka.kovaaks_username, kp.is_active) 
+            FROM accounts.global_kovaaks_accounts ka 
+            JOIN profiles.kovaaks_profiles kp ON 
+            ka.kovaaks_id = kp.kovaaks_id
+            WHERE discord_id = $1 AND guild_id = $2"""
         case _:
             sql_statement = ""
-            table_name = ""
-    values = (discord_id,)
-    profile = await execute_fetch(sql_statement, values, table_name)
+    values = (discord_id, guild_id)
+    profile = await db.execute(sql_statement, values)
     return profile[0] if profile else None
 
 

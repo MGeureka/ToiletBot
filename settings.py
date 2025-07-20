@@ -49,6 +49,10 @@ LEADERBOARD_TYPES = {
                                        "Advanced Dojo Aimlabs Playlist"]
 }
 
+# Default "is_enabled" for leaderboards
+DEFAULT_LEADERBOARD_STATE = [True, True, False, False, False, False]
+
+OWNER_ID = [363658627950706698]
 VERIFIED_USERS = [123229985791016961, 363658627950706698, 1266397087701139539]
 
 API_HEADER_FIELDS = {

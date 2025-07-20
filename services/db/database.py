@@ -25,7 +25,8 @@ class CustomConnection(asyncpg.Connection):
         self.remove_query_logger(self.custom_query_logger)
 
 
-    def custom_query_logger(self, record) -> None:
+    @staticmethod
+    def custom_query_logger(record) -> None:
         """Custom query logger to handle query logs."""
         query = record.query.strip().replace('\n', ' ')
         args = record.args
@@ -125,25 +126,29 @@ class Database:
 
     async def execute(self, query: str, *args):
         """Execute a commit operation on the database."""
-        # TODO: Implement the method to execute a commit
-        #  operation on the database.
-        async with self.acquire() as connection:
-            raise NotImplementedError
+        async with self.acquire() as conn:
+            try:
+                result = await conn.execute(query, *args)
+                return result
+            except Exception as e:
+                raise
 
 
     async def executemany(self, query: str, *args):
         """Execute a commit operation with multiple values on the database."""
-        # TODO: Implement the method to execute a commit operation with
-        #  multiple values on the database.
-        async with self.acquire() as connection:
-            raise NotImplementedError
-
-
-    async def fetch(self, query: str, *args):
-        """Fetch data from the database."""
-        async with self.acquire() as connection:
+        async with self.acquire() as conn:
             try:
-                result = await connection.fetch(query, *args)
+                result = await conn.executemany(query, *args)
+                return result
+            except Exception as e:
+                raise
+
+
+    async def fetchmany(self, query: str, *args):
+        """Fetch multiple rows from the database."""
+        async with self.acquire() as conn:
+            try:
+                result = await conn.fetch(query, *args)
                 return result
             except Exception as e:
                 raise

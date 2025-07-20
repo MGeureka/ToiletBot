@@ -20,7 +20,6 @@ async def add_kovaaks_username_todb(
     :param int discord_id: Discord ID
     :returns: (bool, str|None)
     """
-    await update_discord_profile(discord_username, discord_id)
     existing_kovaaks_profile = await get_profiles_from_db(discord_id,
                                                           "kovaaks")
     relink = False
