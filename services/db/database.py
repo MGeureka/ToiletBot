@@ -154,6 +154,16 @@ class Database:
                 raise
 
 
+    async def fetchval(self, query: str, *args):
+        """Fetch a single value from the database."""
+        async with self.acquire() as conn:
+            try:
+                result = await conn.fetchval(query, *args)
+                return result
+            except Exception as e:
+                raise
+
+
 async def init_db_pool(dsn: str):
     """Initialize the DatabaseConn class."""
     db = Database(dsn)

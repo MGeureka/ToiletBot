@@ -52,15 +52,11 @@ async def update_guild_leaderboard_settings(
     is_enabled, last_updated)
     VALUES ($1, $2, $3, $4)
     ON CONFLICT (guild_id, leaderboard_type) DO UPDATE SET
-    is_enabled = EXCLUDED.is_enabled,
+        is_enabled = EXCLUDED.is_enabled;
     """
-    data = [[
-        guild_id,
-        lb_type,
-        enabled,
-        datetime.now(timezone.utc)]
-        for lb_type, enabled in zip(LEADERBOARD_TYPES,
-                                    is_enabled)
+    now = datetime.now(timezone.utc)
+    data = [(guild_id, lb_type, enabled, now)
+        for lb_type, enabled in zip(LEADERBOARD_TYPES, is_enabled)
     ]
     await db.executemany(query, data)
 
@@ -68,7 +64,8 @@ async def update_guild_leaderboard_settings(
 async def initialize_guild(db: Database, guild_id: int, guild_name: str):
     """Initialize a guild in the database."""
     await update_guild(db, guild_id, guild_name)
-    await update_guild_settings(db, guild_id, None, None)
+    await update_guild_settings(db, guild_id, leaderboard_channel_id=None,
+                                leaderboard_message_id=None)
     await update_guild_leaderboard_settings(db, guild_id, DEFAULT_LEADERBOARD_STATE)
 
 

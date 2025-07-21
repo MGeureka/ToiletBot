@@ -1,5 +1,5 @@
 from asyncio import timeout
-
+import asyncpg
 from settings import DB_PATH
 import aiosqlite
 import uuid, aiofiles, json
@@ -88,7 +88,7 @@ async def check_profile_indb(discord_id: str, profile: str,
 
 
 async def get_profile_from_db(db: Database, discord_id: int, guild_id: int,
-                              profile: str) -> tuple:
+                              profile: str) -> asyncpg.Record:
     """Returns a tuple of the profile and activity status
 
     discord_id: The discord id
@@ -102,21 +102,21 @@ async def get_profile_from_db(db: Database, discord_id: int, guild_id: int,
             WHERE gm.discord_id = $1 AND gm.guild_id = $2;"""
         case "val":
             sql_statement = f"""
-            SELECT (va.valorant_id, va.valorant_username, va.valorant_tag, 
-            va.region, vp.is_active) FROM accounts.global_valorant_accounts va 
+            SELECT va.valorant_id, va.valorant_username, va.valorant_tag, 
+            va.region, vp.is_active FROM accounts.global_valorant_accounts va 
             JOIN profiles.valorant_profiles vp ON 
             va.valorant_id = vp.valorant_id
             WHERE discord_id = $1 AND guild_id = $2"""
         case "aimlabs":
             sql_statement = f"""
-            SELECT (aa.aimlabs_id, aa.aimlabs_username, ap.is_active) 
+            SELECT aa.aimlabs_id, aa.aimlabs_username, ap.is_active
             FROM accounts.global_aimlabs_accounts aa 
             JOIN profiles.aimlabs_profiles ap ON 
             aa.aimlabs_id = ap.aimlabs_id
             WHERE discord_id = $1 AND guild_id = $2"""
         case "kovaaks":
             sql_statement = f"""
-            SELECT (ka.kovaaks_id, ka.kovaaks_username, kp.is_active) 
+            SELECT ka.kovaaks_id, ka.kovaaks_username, kp.is_active
             FROM accounts.global_kovaaks_accounts ka 
             JOIN profiles.kovaaks_profiles kp ON 
             ka.kovaaks_id = kp.kovaaks_id
@@ -124,7 +124,7 @@ async def get_profile_from_db(db: Database, discord_id: int, guild_id: int,
         case _:
             sql_statement = ""
     values = (discord_id, guild_id)
-    profile = await db.execute(sql_statement, values)
+    profile = await db.fetchmany(sql_statement, values)
     return profile[0] if profile else None
 
 
