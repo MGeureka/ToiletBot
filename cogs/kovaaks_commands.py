@@ -2,9 +2,11 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from utils.log import logger
-from services.db.kovaaks_database import (add_kovaaks_username_todb,
+from services.db.kovaaks_database import (initialize_kovaaks_profile,
                                           remove_kovaaks_username_fromdb,
                                           update_kovaaks_username_indb)
+from services.db.discord_database import (check_discord_profile_exists,
+                                          initialize_discord_profile,)
 from services.api.kovaaks_api import check_kovaaks_username
 from utils.errors import (WeakError, CheckError)
 import traceback
@@ -34,13 +36,20 @@ class KovaaksCommands(commands.Cog):
 
         user_nick = interaction.user.display_name
         user_id = interaction.user.id
+        guild_id = interaction.guild.id
+        if not await check_discord_profile_exists(self.bot.db, user_id,
+                                                  guild_id):
+            avatar_key = interaction.user.display_avatar.key
+            await initialize_discord_profile(self.bot.db, user_id,
+                                             user_nick, avatar_key, guild_id)
         try:
             kovaaks_id, steam_id, steam_username = \
                 await check_kovaaks_username(username)
 
-            response, existing_username = await add_kovaaks_username_todb(
-                username, kovaaks_id, steam_username, steam_id,
-                user_nick, user_id)
+            response, existing_username = await initialize_kovaaks_profile(
+                self.bot.db, username, str(kovaaks_id), steam_username,
+                steam_id, user_id, guild_id
+            )
             if response:
                 logger.info(f"{user_nick} ({user_id}) ran "
                             f"/add_kovaaks_profile with "
@@ -91,8 +100,9 @@ class KovaaksCommands(commands.Cog):
 
         user_nick = interaction.user.display_name
         user_id = interaction.user.id
+        guild_id = interaction.guild.id
         try:
-            await remove_kovaaks_username_fromdb(user_id, user_nick)
+            await remove_kovaaks_username_fromdb(self.bot.db, user_id, guild_id)
             logger.info(f"{user_nick} ({user_id}) ran "
                         f"/remove_kovaaks_profile successfully")
             await interaction.followup.send(f"Successfully removed "
@@ -127,16 +137,18 @@ class KovaaksCommands(commands.Cog):
 
         user_nick = interaction.user.display_name
         user_id = interaction.user.id
+        guild_id = interaction.guild.id
         try:
             kovaaks_id, steam_id, steam_username = \
                 await check_kovaaks_username(username)
-            await update_kovaaks_username_indb(username, kovaaks_id,
+            await update_kovaaks_username_indb(self.bot.db, username,
+                                               str(kovaaks_id),
                                                steam_username, steam_id,
-                                               user_nick, user_id)
+                                               user_id, guild_id)
             logger.info(f"{user_nick} ({user_id}) ran "
                         f"/update_kovaaks_profile successfully")
             await interaction.followup.send(f"Successfully updated "
-                                            f"your profile in the database"
+                                            f"your profile in the database "
                                             f"to `{username}`.")
         except WeakError as e:
             logger.warning(f"{user_nick} ({user_id}) ran "

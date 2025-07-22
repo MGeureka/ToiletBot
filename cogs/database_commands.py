@@ -27,7 +27,7 @@ from services.db.leaderboard_database import (
     get_dojo_aimlabs_playlist_balanced_leaderboard_data,
     get_dojo_aimlabs_playlist_advanced_leaderboard_data
 )
-from utils.database_helper import (get_profiles_from_db, get_discord_profiles,
+from utils.database_helper import (get_profile_from_db, get_discord_profiles,
                                    set_profile_inactive)
 from utils.errors import CheckError
 from utils.image_gen import LeaderboardRenderer, delete_files_indir

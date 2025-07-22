@@ -123,8 +123,7 @@ async def get_profile_from_db(db: Database, discord_id: int, guild_id: int,
             WHERE discord_id = $1 AND guild_id = $2"""
         case _:
             sql_statement = ""
-    values = (discord_id, guild_id)
-    profile = await db.fetchmany(sql_statement, values)
+    profile = await db.fetchmany(sql_statement, discord_id, guild_id)
     return profile[0] if profile else None
 
 

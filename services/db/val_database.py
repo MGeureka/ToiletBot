@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from utils.errors import UsernameAlreadyExists, UsernameDoesNotExist
-from utils.database_helper import (get_profiles_from_db, execute_commit)
+from utils.database_helper import (get_profile_from_db, execute_commit)
 from services.db.discord_database import update_discord_profile
 
 

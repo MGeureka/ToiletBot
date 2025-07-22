@@ -13,17 +13,17 @@ class EventListener(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
         # TODO: Implement logic for when the bot joins a guild
-        owner = self.bot.get_user(id=OWNER_ID)
+        owner = self.bot.get_user(OWNER_ID)
         await owner.send(f"I have joined a new guild: {guild.name} ({guild.id})")
         logger.info(f"Joined new guild: {guild.name} ({guild.id}), "
                     f"initializing...")
-        await initialize_guild(self.bot, guild.id, guild.name)
+        await initialize_guild(self.bot.db, guild.id, guild.name)
 
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: discord.Guild):
         # TODO: Implement logic for when the bot is removed from a guild
-        await set_guild_inactive(self.bot, guild.id)
+        await set_guild_inactive(self.bot.db, guild.id)
 
 
     @commands.Cog.listener()

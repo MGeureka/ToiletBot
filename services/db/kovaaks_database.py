@@ -1,11 +1,27 @@
 from datetime import datetime, timezone
-
 import asyncpg
 
 from utils.errors import UsernameAlreadyExists, UsernameDoesNotExist
-from utils.database_helper import (get_profile_from_db, execute_commit)
+from utils.database_helper import (get_profile_from_db)
+from utils.log import db_logger
 from services.db.discord_database import update_discord_profile
 from services.db.database import Database
+
+
+async def untrack_orphaned_kovaaks_account(db: Database, kovaaks_id: str):
+    """Checks if a kovaaks account is orphaned (not linked to any profile)."""
+    query1 = """
+             SELECT COUNT(*) FROM profiles.kovaaks_profiles
+             WHERE kovaaks_id = $1; \
+             """
+    count = await db.fetchval(query1, kovaaks_id)
+    if count:
+        return
+    query2 = """
+             UPDATE accounts.global_kovaaks_accounts SET is_tracked = False
+             WHERE kovaaks_id = $1; \
+             """
+    await db.execute(query2, kovaaks_id)
 
 
 async def add_kovaaks_account_todb(db: Database, kovaaks_id: str, kovaaks_username: str, steam_id: str,
@@ -14,16 +30,18 @@ async def add_kovaaks_account_todb(db: Database, kovaaks_id: str, kovaaks_userna
     now = datetime.now(timezone.utc)
     query = """
     INSERT INTO accounts.global_kovaaks_accounts (kovaaks_id, 
-    kovaaks_username, steam_id, steam_username, date_added, last_updated)
-    VALUES ($1, $2, $3, $4, $5, $6)
+    kovaaks_username, steam_id, steam_username, date_added, last_updated, is_tracked)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
     ON CONFLICT (kovaaks_id) DO UPDATE SET
+        kovaaks_id = excluded.id,
         steam_id = excluded.steam_id,
         kovaaks_username = excluded.kovaaks_username,
         steam_username = excluded.steam_username,
         last_updated = excluded.last_updated;
     """
+    db_logger.info(f"Adding kovaaks account to global database {kovaaks_username}")
     await db.execute(query, kovaaks_id, kovaaks_username,
-                     steam_id, steam_username, now, 1, now)
+                     steam_id, steam_username, now, now, True)
 
 
 async def add_kovaaks_profile_todb(db: Database, discord_id: int,
@@ -38,14 +56,15 @@ async def add_kovaaks_profile_todb(db: Database, discord_id: int,
         last_updated = excluded.last_updated,
         is_active = excluded.is_active;
     """
+    db_logger.info(f"Adding kovaaks profile to database for user {discord_id}"
+                   f" in guild {guild_id}")
     await db.execute(query, discord_id, guild_id, kovaaks_id,
                      now, now, True)
 
 
 async def initialize_kovaaks_profile(db: Database,
         kovaaks_username: str, kovaaks_id: str, steam_username: str,
-        steam_id: str, discord_username: str, discord_id: int,
-        guild_id: int) -> tuple:
+        steam_id: str, discord_id: int, guild_id: int) -> tuple:
     """Adds or updates kovaaks profile in db. Returns (True, str) if
     process is a relink of an existing inactive profile. (False, None)
     otherwise.
@@ -60,10 +79,12 @@ async def initialize_kovaaks_profile(db: Database,
                                         f"`{existing_kovaaks_profile[1]}` in the "
                                         f"database. Update it using "
                                         f"`/update_kovaaks_profile`")
-    await add_kovaaks_profile_todb(db, discord_id, guild_id, kovaaks_id)
+    db_logger.info(f"Initializing kovaaks profile for user {discord_id}")
     await add_kovaaks_account_todb(db, kovaaks_id, kovaaks_username,
-                                    steam_id, steam_username)
+                                   steam_id, steam_username)
+    await add_kovaaks_profile_todb(db, discord_id, guild_id, kovaaks_id)
     if relink:
+        await untrack_orphaned_kovaaks_account(db, existing_kovaaks_profile["kovaaks_id"])
         return True, existing_kovaaks_profile["kovaaks_username"]
     return False, None
 
@@ -85,22 +106,6 @@ async def remove_kovaaks_username_fromdb(db: Database, discord_id: int,
     WHERE discord_id = $1 AND guild_id = $2;
     """
     await db.execute(query, discord_id, guild_id)
-
-
-async def untrack_orphaned_kovaaks_account(db: Database, kovaaks_id: str):
-    """Checks if a kovaaks account is orphaned (not linked to any profile)."""
-    query1 = """
-    SELECT COUNT(*) FROM profiles.kovaaks_profiles 
-    WHERE kovaaks_id = $1;
-    """
-    count = await db.fetchval(query1, kovaaks_id)
-    if count:
-        return
-    query2 = """
-    UPDATE accounts.global_kovaaks_accounts SET is_tracked = False 
-    WHERE kovaaks_id = $1;
-    """
-    await db.execute(query2, kovaaks_id)
 
 
 async def update_kovaaks_username_indb(
@@ -125,12 +130,13 @@ async def update_kovaaks_username_indb(
     await add_kovaaks_account_todb(
         db, kovaaks_id, kovaaks_username, steam_id, steam_username
     )
-    sql_statement = f"""
+    query = f"""
     UPDATE profiles.kovaaks_profiles SET
     kovaaks_id = $1
     WHERE discord_id = $2 AND guild_id = $3;
     """
-    await db.execute(sql_statement, kovaaks_id, discord_id, guild_id)
+    await db.execute(query, kovaaks_id, discord_id, guild_id)
+    await untrack_orphaned_kovaaks_account(db, existing_kovaaks_profile['kovaaks_id'])
 
 
 async def setup(bot): pass

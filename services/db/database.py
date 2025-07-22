@@ -7,41 +7,6 @@ from settings import DSN
 from utils.log import db_logger, logger
 
 
-class CustomConnection(asyncpg.Connection):
-    def __init__(self, *args, **kwargs) -> None:
-        """Initialize the CustomConnection class."""
-        super().__init__(*args, **kwargs)
-
-
-    async def setup_hook(self) -> None:
-        """Hook to set up the connection after it has been created."""
-        # This method can be customized to perform any setup after the
-        # connection is created.
-        self.add_query_logger(self.custom_query_logger)
-
-
-    async def teardown_hook(self) -> None:
-        """Hook to clean up the connection before it is closed."""
-        self.remove_query_logger(self.custom_query_logger)
-
-
-    @staticmethod
-    def custom_query_logger(record) -> None:
-        """Custom query logger to handle query logs."""
-        query = record.query.strip().replace('\n', ' ')
-        args = record.args
-        duration = record.elapsed
-        exc = record.exception
-        conn_params = record.conn_params
-
-        if exc:
-            db_logger.warning(f"[{conn_params.user}] QUERY ERROR → {query} | "
-                              f"Args: {args} → {exc}")
-        else:
-            db_logger.info(f"[{conn_params.user}] Executed in {duration:.3f}s → "
-                           f"{query} | Args: {args}")
-
-
 class Database:
     def __init__(self, dsn: str):
         """Initialize the DatabaseConn class."""
@@ -60,9 +25,6 @@ class Database:
                 min_size=2,
                 max_size=15,
                 max_inactive_connection_lifetime=60.0, # seconds
-                connection_class=CustomConnection,
-                init=lambda conn: conn.setup_hook(),
-                reset=lambda conn: conn.teardown_hook()
             )
             logger.info("Database connection pool initialized.")
             db_logger.info("Database connection pool initialized.")
@@ -134,11 +96,11 @@ class Database:
                 raise
 
 
-    async def executemany(self, query: str, *args):
+    async def executemany(self, query: str, args: list[tuple]):
         """Execute a commit operation with multiple values on the database."""
         async with self.acquire() as conn:
             try:
-                result = await conn.executemany(query, *args)
+                result = await conn.executemany(query, args)
                 return result
             except Exception as e:
                 raise

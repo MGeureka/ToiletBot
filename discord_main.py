@@ -59,7 +59,6 @@ all_extensions = [
     'cogs.assign_roles_commands',
     'cogs.dojo_commands',
     'cogs.events_listener',
-    'cogs.test_cog',
     # 'cogs.rotating_leaderboard_commands'
 ]
 
