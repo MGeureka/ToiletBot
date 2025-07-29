@@ -16,3 +16,4 @@ data/
 logs/
 temp/
 cache/
+.dockerignore
