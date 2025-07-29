@@ -1,0 +1,12 @@
+services:
+  bot:
+    volumes:
+      - ./bot:/app
+
+  scheduler:
+    volumes:
+      - ./scheduler:/app
+
+  writer:
+    volumes:
+      - ./writer:/app

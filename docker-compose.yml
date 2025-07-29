@@ -1,0 +1,72 @@
+services:
+  postgres:
+    image: postgres:17.5
+    container_name: postgres
+    restart: unless-stopped
+    env_file:
+      - ./postgres/.env
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:8.0
+    container_name: redis
+    restart: unless-stopped
+    volumes:
+      - ./redis_service/data:/data
+    ports:
+      - "6379:6379"
+
+  bot:
+    build:
+      context: .
+      dockerfile: bot/Dockerfile
+    container_name: bot
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./bot/.env
+    volumes:
+      - ./logs:/logs
+      - ./common:/common
+    environment:
+      - PYTHONPATH=/
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: scheduler/Dockerfile
+    container_name: scheduler
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./scheduler/.env
+    volumes:
+      - ./logs:/logs
+      - ./common:/common
+    environment:
+      - PYTHONPATH=/
+
+  writer:
+    build:
+      context: .
+      dockerfile: writer/Dockerfile
+    container_name: writer
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./writer/.env
+    volumes:
+      - ./logs:/logs
+      - ./common:/common
+    environment:
+      - PYTHONPATH=/

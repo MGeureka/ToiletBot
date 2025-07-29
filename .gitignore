@@ -1,18 +1,30 @@
-#ignore .env
-.env
+# ignore .env
+*.env
+.venv/
+venv/
+.env.*
 
-#ignore all logs
+# ignore all logs
 *.log
+logs/
 
-#ignore db files
+
+# ignore db files
 *.db
+*.rdb
 
-#ignore all .prof
+# ignore all .prof
 *.prof
 
+#ignore docker volumes
+postgres/data/
+redis_service/data/
+**/node_modules/
+.dockerignore
+
+.vscode/
 .idea/
 __pycache__/
 data/
-logs/
 temp/
-cache/
+bot/cache/
