@@ -61,7 +61,7 @@ class KovaaksWorker(UpdateScheduler):
         }
 
 
-    async def process_task(self, data):
+    async def process_task(self, data, stream, message_id):
         """Process a task from the Kovaaks stream."""
         steam_id = data.get("steam_id")
         dedupe_key = data.get("dedupe_key")
@@ -85,6 +85,12 @@ class KovaaksWorker(UpdateScheduler):
                 return
 
             await self.queue_writer(kovaaks_data, data)
+            await self.ack_task(stream, message_id, data['dedupe_key'])
 
         except Exception as e:
             logger.error(f"Error processing task for Steam ID {steam_id}: {str(e)}", exc_info=True)
+
+
+    async def queue_writer(self, kovaaks_data, data):
+        """Write the Kovaaks data to the Redis stream."""
+        raise NotImplementedError("Queue writer not implemented for KovaaksWorker")

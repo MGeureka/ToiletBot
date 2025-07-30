@@ -2,7 +2,7 @@ import asyncio
 import time
 import redis.asyncio as redis
 from common.log import sch_logger as logger
-from config import API_HEADER_FIELDS, REDIS_URL, DSN
+from config import REDIS_URL, DSN
 from common.database import Database
 from workers.aimlabs_worker import AimlabsWorker
 from workers.kovaaks_worker import KovaaksWorker
@@ -15,8 +15,8 @@ async def init_consumers():
     redis_client = redis.from_url(REDIS_URL, decode_responses=True)
     consumers = [
         ValorantWorker(redis_client=redis_client),
-        # AimlabsWorker(redis_client=redis_client),
-        # KovaaksWorker(redis_client=redis_client),
+        AimlabsWorker(redis_client=redis_client),
+        KovaaksWorker(redis_client=redis_client),
     ]
     # Run all consumer loops concurrently
     consumer_tasks = [asyncio.create_task(consumer.start()) for consumer in consumers]

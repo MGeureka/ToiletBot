@@ -13,7 +13,7 @@ from discord import app_commands
 from discord.ext import tasks
 
 from services.db.discord_database import update_discord_profile
-from writer.leaderboard_database import (
+from db.leaderboard_database import (
     update_valorant_rank_leaderboard,
     update_valorant_dm_leaderboard,
     update_voltaic_s5_leaderboard,

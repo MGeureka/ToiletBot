@@ -46,13 +46,13 @@ async def fetch_dms(session: aiohttp.ClientSession, puuid: str, region: str,
                           )
 
 
-async def fetch_rating(session: aiohttp.ClientSession, puuid: str, region: str, logger):
+async def fetch_rating(session: aiohttp.ClientSession, puuid: str, region: str):
     try:
-        logger.info(f"Fetching rating for PUUID: {puuid} in region: {region}")
         async with session.get(
                 f"https://api.henrikdev.xyz/valorant/v3/by-puuid/mmr/"
                 f"{region}/{PLATFORM}/{puuid}",
                 headers={"Authorization": f"{VALO_API_KEY}"},
+                allow_redirects=False
         ) as response:
             headers = response.headers
             data = await get_json(response)

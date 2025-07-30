@@ -28,6 +28,7 @@ class AimlabsWorker(UpdateScheduler):
 
 
     async def dojo_call_api(self, aimlabs_id: str):
+        call_time = time.time()
         (voltaic_val, _), _ = await fetch_user_plays(
             self.session, [aimlabs_id], self.all_task_ids
         )
@@ -45,19 +46,20 @@ class AimlabsWorker(UpdateScheduler):
             "balanced_max_min": balanced_max_min,
             "dojo_advanced": dojo_advanced,
             "advanced_max_min": advanced_max_min
-        }, headers
+        }, headers, call_time
 
 
     async def call_api(self, aimlabs_id: str):
         """Call the Aimlabs API to fetch data for a given Aimlabs ID."""
+        call_time = time.time()
         (voltaic_val, _), headers = await fetch_user_plays(
             self.session, [aimlabs_id], self.all_task_ids
         )
-        return {"voltaic_val": voltaic_val}, headers
+        return {"voltaic_val": voltaic_val}, headers, call_time
 
 
-    async def process_task(self, data):
-        """Process a task from the Aimlabs stream."""
+    async def dojo_process_task(self, data, stream, message_id):
+        """Process a Dojo task from the Aimlabs stream."""
         aimlabs_id = data.get("aimlabs_id")
         dedupe_key = data.get("dedupe_key")
 
@@ -67,31 +69,65 @@ class AimlabsWorker(UpdateScheduler):
 
         try:
             # Acquire rate limit tokens
-            if data.get("is_dojo"):
-                start_time = time.time()
-                await self.rate_limiter.acquire(self.dojo_tokens_needed)
-                aimlabs_data, headers = await self.dojo_call_api(aimlabs_id)
-                logger.info(f"[AimlabsWorker] Dojo {aimlabs_id} "
-                            f"({time.time() - start_time}) -> Tokens: "
-                            f"{self.rate_limiter.tokens} "
-                            f"({self.rate_limiter.reset_time:.3f}s)")
-            else:
-                start_time = time.time()
-                await self.rate_limiter.acquire(self.tokens_needed)
-                aimlabs_data, headers = await self.call_api(aimlabs_id)
-                logger.info(f"[AimlabsWorker] {aimlabs_id} "
-                            f"({time.time() - start_time}) -> Tokens: "
-                            f"{self.rate_limiter.tokens} "
-                            f"({self.rate_limiter.reset_time:.3f}s)")
+            start_time = time.time()
+            await self.rate_limiter.acquire(self.dojo_tokens_needed)
+            aimlabs_data, headers, call_time = await self.dojo_call_api(aimlabs_id)
+            logger.info(f"[AimlabsWorker] Dojo {aimlabs_id} "
+                        f"({time.time() - start_time}) -> Tokens: "
+                        f"{self.rate_limiter.tokens} "
+                        f"({self.rate_limiter.reset_time:.3f}s)")
             await self.rate_limiter.update_limits(
                 int(headers.get("ip-ratelimit-remaining")),
-                float(headers.get("ip-ratelimit-reset"))
+                float(headers.get("ip-ratelimit-reset")),
+                call_time
             )
             if not aimlabs_data:
                 logger.warning(f"No Aimlabs data found for Aimlabs ID: {aimlabs_id}")
                 return
 
-            await self.queue_writer(aimlabs_data, data)
+            await self.ack_task(stream, message_id, data['dedupe_key'])
 
         except Exception as e:
             logger.error(f"Error processing task for Aimlabs ID {aimlabs_id}: {str(e)}", exc_info=True)
+
+
+    async def process_task(self, data, stream, message_id):
+        """Process a task from the Aimlabs stream."""
+        aimlabs_id = data.get("aimlabs_id")
+        dedupe_key = data.get("dedupe_key")
+
+        if not aimlabs_id or not dedupe_key:
+            logger.error(f"Invalid task data: {data}")
+            return
+
+        try:
+            start_time = time.time()
+            await self.rate_limiter.acquire(self.tokens_needed)
+            aimlabs_data, headers, call_time = await self.call_api(aimlabs_id)
+            logger.info(f"[AimlabsWorker] {aimlabs_id} "
+                        f"({time.time() - start_time}) -> Tokens: "
+                        f"{self.rate_limiter.tokens} "
+                        f"({self.rate_limiter.reset_time:.3f}s)")
+            await self.rate_limiter.update_limits(
+                int(headers.get("ip-ratelimit-remaining")),
+                float(headers.get("ip-ratelimit-reset")),
+                call_time
+            )
+            if not aimlabs_data:
+                logger.warning(f"No Aimlabs data found for Aimlabs ID: {aimlabs_id}")
+                return
+
+            await self.ack_task(stream, message_id, data['dedupe_key'])
+
+        except Exception as e:
+            logger.error(f"Error processing task for Aimlabs ID {aimlabs_id}: {str(e)}", exc_info=True)
+
+
+    async def dojo_write_db(self):
+        """Write the Dojo data to the database."""
+        raise NotImplementedError("Dojo write DB is not implemented for AimlabsWorker.")
+
+
+    async def write_db(self):
+        """Write the Aimlabs data to the database."""
+        raise NotImplementedError("Write DB is not implemented for AimlabsWorker.")

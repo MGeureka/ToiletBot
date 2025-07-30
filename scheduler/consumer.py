@@ -15,6 +15,8 @@ class RateLimiter:
         self.lock = asyncio.Lock()
         self.consumer_type = consumer_type
         self.last_updated = time.time()
+        self.previous_reset = self.reset_time
+
 
     async def acquire(self, tokens_needed: int):
         while True:
@@ -33,10 +35,13 @@ class RateLimiter:
                 self.tokens = self.max_tokens
 
 
-    async def update_limits(self, tokens: int, reset_time: float):
+    async def update_limits(self, tokens: int, reset_time: float, call_time: float):
         """Update the rate limit parameters"""
-        async with self.lock:
-            self.reset_time = reset_time
+        if call_time > self.last_updated:
+            async with self.lock:
+                self.tokens = tokens
+                self.reset_time = reset_time
+                self.last_updated = call_time
 
 
 class UpdateScheduler:
@@ -103,23 +108,14 @@ class UpdateScheduler:
         await self.redis.srem("queued_profiles", dedupe_key)
 
 
-    async def queue_writer(self, api_data, task_data):
-        """Write a task to the specified Redis stream."""
-        await self.redis.rpush("writer_queue", msgpack.packb([api_data, task_data]))
-
-
-    async def process_task(self, data):
-        """Process a single task message."""
+    async def dojo_process_task(self, data, stream, message_id):
+        """Process a task that requires Dojo API calls."""
         raise NotImplementedError
 
-    async def get_pending_count(self) -> int:
-        try:
-            result1 = await self.redis.xpending(self.low_priority_stream, self.consumer_group)
-            result2 = await self.redis.xpending(self.high_priority_stream, self.consumer_group)
-            return result1['pending'] + result2['pending']
-        except Exception as e:
-            logger.error(f"Error checking pending entries: {e}", exc_info=True)
-            return 0  # Fallback: assume zero if there's an error
+
+    async def process_task(self, data, stream, message_id):
+        """Process a single task message."""
+        raise NotImplementedError
 
 
     async def run(self):
@@ -127,12 +123,6 @@ class UpdateScheduler:
         logger.info(f"Consumer '{self.consumer_type}' started. Listening on streams.")
         while True:
             try:
-                pending = await self.get_pending_count()
-                if pending >= 5:
-                    logger.info(f"Pending tasks in {self.consumer_type} stream: {pending}. "
-                                f"Sleeping for 10 seconds...")
-                    await asyncio.sleep(10)
-                    continue
                 # Always check high-priority stream first
                 task = await self.get_task(self.high_priority_stream)
                 if not task:
@@ -140,16 +130,13 @@ class UpdateScheduler:
 
                 if task:
                     stream, message_id, data = task
-                    # logger.info(f"Processing task {data['task_id']}: ")
-                    await self.process_task(data)
 
-                    # Acknowledge the task after processing
-                    await self.ack_task(stream, message_id, data['dedupe_key'])
+                    asyncio.create_task(self.process_task(data, stream, message_id))
 
                     if data['is_dojo']:
                         await asyncio.sleep(self.interval * self.dojo_tokens_needed)
                     else:
-                        await asyncio.sleep(self.interval * self.tokens_needed)
+                        await asyncio.sleep(self.interval * self.dojo_tokens_needed)
                 else:
                     logger.info(f"No tasks found in {self.consumer_type} stream. "
                                 f"Sleeping...")

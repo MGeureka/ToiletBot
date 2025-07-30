@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from bot.utils.checks import is_correct_channel, is_correct_author
-from writer.leaderboard_database import (
+from db.leaderboard_database import (
     get_valorant_rank_leaderboard_data,
     get_valorant_dm_leaderboard_data,
     get_voltaic_s5_benchmarks_leaderboard_data,
