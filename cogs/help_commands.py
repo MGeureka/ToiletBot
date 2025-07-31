@@ -13,7 +13,6 @@ class HelpCommand(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="help", description="List all available slash commands")
-    @is_correct_channel()
     async def help(self, interaction: discord.Interaction):
         embed = Embed(title="List of Commands for Toilet Bot", color=discord.Color.blurple())
         file = discord.File("assets/images/toilet-pfp-fan-art.jpg", filename="help_thumbnail.jpg")
