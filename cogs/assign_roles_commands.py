@@ -34,7 +34,7 @@ class RoleManager(commands.Cog):
         # Valorant rank role update every 20 minutes
         self.scheduler.add_job(
             self.assign_rank_roles,
-            IntervalTrigger(minutes=20),
+            IntervalTrigger(minutes=1),
         )
         self.scheduler.start()
         logger.info("Started scheduler")
