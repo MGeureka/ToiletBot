@@ -109,7 +109,7 @@ class RoleManager(commands.Cog):
                 logger.warning(f"Member with ID {discord_id} not found in guild.")
                 continue
 
-            role_id = DOJO_RANK_ROLES.get(current_rank_id)
+            role_id = DOJO_RANK_ROLES.get(int(current_rank_id))
 
             if not role_id:
                 logger.warning(f"Role ID for rank {current_rank} ({current_rank_id}) not found.")
