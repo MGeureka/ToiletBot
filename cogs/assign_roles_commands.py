@@ -34,7 +34,7 @@ class RoleManager(commands.Cog):
         # Valorant rank role update every 20 minutes
         self.scheduler.add_job(
             self.assign_rank_roles,
-            IntervalTrigger(minutes=1),
+            IntervalTrigger(minutes=20),
         )
         self.scheduler.start()
         logger.info("Started scheduler")
@@ -102,7 +102,8 @@ class RoleManager(commands.Cog):
         for profile in data:
             (discord_id, discord_username, current_rank,
              current_rank_id, current_rr) = profile
-
+            if discord_id == 123229985791016961:
+                continue
             member = guild.get_member(discord_id)
 
             if not member:
@@ -124,11 +125,11 @@ class RoleManager(commands.Cog):
             if roles_to_remove:
                 logger.info(f"Removing roles {', '.join(role.name for role in roles_to_remove)} "
                             f"from {member.nick or member.name}")
-                # await member.remove_roles(*roles_to_remove)
+                await member.remove_roles(*roles_to_remove)
             role = discord.utils.get(guild.roles, id=role_id)
             if role:
                 logger.info(f"Assigning role {role.name} to {member.nick or member.name}")
-                # await member.add_roles(role)
+                await member.add_roles(role)
 
 
     @staticmethod
