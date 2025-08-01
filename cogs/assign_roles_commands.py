@@ -112,6 +112,7 @@ class RoleManager(commands.Cog):
             role_id = DOJO_RANK_ROLES.get(current_rank_id)
 
             if not role_id:
+                logger.warning(f"Role ID for rank {current_rank} ({current_rank_id}) not found.")
                 continue  # Unknown rank ID
 
             current_role = discord.utils.get(member.roles, id=role_id)
