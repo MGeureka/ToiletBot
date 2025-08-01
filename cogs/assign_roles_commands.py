@@ -26,7 +26,7 @@ scheduler = AsyncIOScheduler(timezone=eastern)
 class RoleManager(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.scheduler = AsyncIOScheduler(timezone=ZoneInfo("America/New_York"))
+        self.scheduler = AsyncIOScheduler(timezone=ZoneInfo("America/New_York"), logger=logger)
         self.scheduler.add_job(
             self.weekly_task,
             CronTrigger(day_of_week="sun", hour=23, minute=59),
@@ -96,6 +96,7 @@ class RoleManager(commands.Cog):
 
 
     async def assign_rank_roles(self):
+        logger.info("Assigning rank roles...")
         guild = self.bot.get_guild(GUILD_ID)
         data = await get_valorant_rank_leaderboard_data()
         for profile in data:
