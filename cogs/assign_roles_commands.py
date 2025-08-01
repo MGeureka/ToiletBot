@@ -8,13 +8,14 @@ from services.db.leaderboard_database import (
     get_valorant_dm_leaderboard_data,
     get_voltaic_s5_benchmarks_leaderboard_data,
     get_voltaic_s1_val_benchmarks_leaderboard_data)
-from settings import GUILD_ID, LEADERBOARD_TYPES
+from settings import GUILD_ID, LEADERBOARD_TYPES, DOJO_RANK_ROLES
 from utils.database_helper import (execute_commit,
                                    execute_fetch)
 from utils.log import logger
 import asyncio
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
 from zoneinfo import ZoneInfo
 
 eastern = ZoneInfo("America/New_York")
@@ -29,6 +30,11 @@ class RoleManager(commands.Cog):
         self.scheduler.add_job(
             self.weekly_task,
             CronTrigger(day_of_week="sun", hour=23, minute=59),
+        )
+        # Valorant rank role update every 20 minutes
+        self.scheduler.add_job(
+            self.assign_rank_roles,
+            IntervalTrigger(minutes=20),
         )
         self.scheduler.start()
         logger.info("Started scheduler")
@@ -87,6 +93,40 @@ class RoleManager(commands.Cog):
 
             # Save this new winner to the DB
             await self.insert_weekly_winner(leaderboard_type, winner_id)
+
+
+    async def assign_rank_roles(self):
+        guild = self.bot.get_guild(GUILD_ID)
+        data = await get_valorant_rank_leaderboard_data()
+        for profile in data:
+            (discord_id, discord_username, current_rank,
+             current_rank_id, current_rr) = profile
+
+            member = guild.get_member(discord_id)
+
+            if not member:
+                logger.warning(f"Member with ID {discord_id} not found in guild.")
+                continue
+
+            role_id = DOJO_RANK_ROLES.get(current_rank_id)
+
+            if not role_id:
+                continue  # Unknown rank ID
+
+            current_role = discord.utils.get(member.roles, id=role_id)
+            if current_role:
+                continue
+            roles_to_remove = [discord.utils.get(guild.roles, id=rid)
+                               for rid in DOJO_RANK_ROLES.values()]
+            roles_to_remove = [role for role in roles_to_remove if role in member.roles]
+            if roles_to_remove:
+                logger.info(f"Removing roles {', '.join(role.name for role in roles_to_remove)} "
+                            f"from {member.nick or member.name}")
+                # await member.remove_roles(*roles_to_remove)
+            role = discord.utils.get(guild.roles, id=role_id)
+            if role:
+                logger.info(f"Assigning role {role.name} to {member.nick or member.name}")
+                # await member.add_roles(role)
 
 
     @staticmethod
